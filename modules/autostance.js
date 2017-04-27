@@ -258,7 +258,7 @@ function autoStance2() {
 
     //start analyzing autostance
     var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
-    var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
+    var newSquadRdy = game.global.lastBreedTime/1000 >= 30;
     var dHealth = baseHealth/2;
     var xHealth = baseHealth;
     var bHealth = baseHealth/2;
@@ -355,6 +355,7 @@ function autoStance2() {
         bDamage += added;
     }
     //^dont attach^.
+    /*
     if (game.global.voidBuff == "bleed" || (enemy.corrupted == 'corruptBleed')) {
         //20% of CURRENT health;
         var added = game.global.soldierHealth * 0.20;
@@ -362,6 +363,7 @@ function autoStance2() {
         xDamage += added;
         bDamage += added;
     }
+    */
     baseDamage *= (game.global.titimpLeft > 0 ? 2 : 1); //consider titimp
     baseDamage *= (!game.global.mapsActive && game.global.mapBonus > 0) ? ((game.global.mapBonus * .2) + 1) : 1;    //consider mapbonus
 
