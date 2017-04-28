@@ -11,5 +11,5 @@
 
 var script = document.createElement('script');
 script.id = 'AutoTrimps-script';
-script.src = 'https://unihedro.github.io/AutoTrimps/AutoTrimps2.js';
+script.src = 'https://esposc.github.io/AutoTrimps/AutoTrimps2.js';
 document.head.appendChild(script);
