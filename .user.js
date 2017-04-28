@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AutoTrimps-unimod
-// @namespace    https://github.com/unihedro/AutoTrimps
+// @namespace    https://github.com/esposc/AutoTrimps
 // @version      2.1.5.3u2-unimod-4-07-2017+Modular
 // @description  Automate all the trimps!
 // @author       zininzinin, spindrjr, Ishkaru, genBTC, Unihedro
