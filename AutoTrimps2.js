@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         AutoTrimpsV2+unimod
-// @namespace    https://github.com/unihedro/AutoTrimps
+// @name         AutoTrimpsV2+esposc
+// @namespace    https://github.com/esposc/AutoTrimps
 // @version      2.1.5.5u3-unimod-4-17-2017+Modular
 // @description  try to take over the world!
 // @author       zininzinin, spindrjr, belaith, ishakaru, genBTC, Unihedron
@@ -15,7 +15,7 @@ var ATversion = '2.1.5.5u3-unimod-4-17-2017+Modular';
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////
 var atscript = document.getElementById('AutoTrimps-script')
-  , base = 'https://unihedro.github.io/AutoTrimps/'
+  , base = 'https://esposc.github.io/AutoTrimps/'
   , module = 'modules/'
   ;
 if (atscript !== null) {
