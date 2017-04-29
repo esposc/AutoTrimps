@@ -274,7 +274,7 @@ function autoStance2() {
     var isCrushed = false;
     var isCritVoidMap = false;
     var isCritDaily = false;
-    if (ignoreCrits == 2) { // Ignore all!
+    if (ignoreCrits != 2) { // Ignore all!
         (isCrushed = (game.global.challengeActive == "Crushed") && game.global.soldierHealth > game.global.soldierCurrentBlock)
             && (critMulti *= 5);
         (isCritVoidMap = (!ignoreCrits && game.global.voidBuff == 'getCrit') || (enemy.corrupted == 'corruptCrit'))
