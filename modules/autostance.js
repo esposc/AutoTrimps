@@ -383,6 +383,7 @@ function autoStance2() {
         if (game.upgrades.Dominance.done && surviveD && leadAttackOK && drainAttackOK && voidCritinDok) {
             setFormation(2);
         //if CritVoidMap, switch out of D stance if we cant survive. Do various things.
+        debug("AutoStance: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
         } else if (isCritThing && !voidCritinDok) {
             //if we are already in X and the NEXT potential crit would take us past the point of being able to return to D/B, switch to B.
             if (game.global.formation == "0" && game.global.soldierHealth - xDamage < bHealth){
