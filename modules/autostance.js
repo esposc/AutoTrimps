@@ -260,8 +260,11 @@ function autoStance2() {
     var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
     var newSquadRdy = game.global.lastBreedTime/1000 >= 30;
     var dHealth = baseHealth/2;
+    var dmissingHealth = dHealth - game.global.soldierHealth;
     var xHealth = baseHealth;
+    var xmissingHealth = xHealth - game.global.soldierHealth;
     var bHealth = baseHealth/2;
+    var bmissingHealth = bHealth - game.global.soldierHealth;
     //COMMON:
     var corrupt = game.global.world >= mutations.Corruption.start();
     var enemy = getCurrentEnemy();
@@ -355,23 +358,14 @@ function autoStance2() {
         bDamage += added;
     }
     //^dont attach^.
-    /*
-    if (game.global.voidBuff == "bleed" || (enemy.corrupted == 'corruptBleed')) {
-        //20% of CURRENT health;
-        var added = game.global.soldierHealth * 0.20;
-        dDamage += added;
-        xDamage += added;
-        bDamage += added;
-    }
-    */
     baseDamage *= (game.global.titimpLeft > 0 ? 2 : 1); //consider titimp
     baseDamage *= (!game.global.mapsActive && game.global.mapBonus > 0) ? ((game.global.mapBonus * .2) + 1) : 1;    //consider mapbonus
 
     //lead attack ok if challenge isn't lead, or we are going to one shot them, or we can survive the lead damage
     var oneshotFast = enemyFast ? enemyHealth <= baseDamage : false;
-    var surviveD = ((newSquadRdy && dHealth > dDamage) || (dHealth - missingHealth > dDamage));
-    var surviveX = ((newSquadRdy && xHealth > xDamage) || (xHealth - missingHealth > xDamage));
-    var surviveB = ((newSquadRdy && bHealth > bDamage) || (bHealth - missingHealth > bDamage));
+    var surviveD = ((newSquadRdy && dHealth > dDamage) || (dHealth - dmissingHealth > dDamage));
+    var surviveX = ((newSquadRdy && xHealth > xDamage) || (xHealth - xmissingHealth > xDamage));
+    var surviveB = ((newSquadRdy && bHealth > bDamage) || (bHealth - bmissingHealth > bDamage));
     var leadAttackOK = !leadChallenge || oneshotFast || surviveD;
     var drainAttackOK = !drainChallenge || oneshotFast || surviveD;
     var isCritThing = isCritVoidMap || isCritDaily || isCrushed;
@@ -383,43 +377,60 @@ function autoStance2() {
         if (game.upgrades.Dominance.done && surviveD && leadAttackOK && drainAttackOK && voidCritinDok) {
             setFormation(2);
         //if CritVoidMap, switch out of D stance if we cant survive. Do various things.
-        } else if (isCritThing && !voidCritinDok) {
+        }
+        else if (isCritThing && !voidCritinDok) {
             //if we are already in X and the NEXT potential crit would take us past the point of being able to return to D/B, switch to B.
-            debug("AutoStance: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
             if (game.global.formation == "0" && game.global.soldierHealth - xDamage < bHealth){
                 if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth))
                     setFormation(3);
+                    debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
             }
             //else if we can totally block all crit damage in X mode, OR we can't survive-crit in D, but we can in X, switch to X.
             // NOTE: during next loop, the If-block above may immediately decide it wants to switch to B.
             else if (xDamage == 0 || ((game.global.formation == 2 || game.global.formation == 4) && voidCritinXok)){
                 setFormation("0");
+                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
             }
             //otherwise, stuff: (Try for B again)
             else {
                 if (game.global.formation == "0"){
-                    if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth))
+                    if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth)) {
                         setFormation(3);
-                    else
+                        debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
+                    }
+                    else {
                         setFormation(1);
+                        debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
+                    }
                 }
-                else if (game.upgrades.Barrier.done && (game.global.formation == 2 || game.global.formation == 4))
+                else if (game.upgrades.Barrier.done && (game.global.formation == 2 || game.global.formation == 4)) {
                     setFormation(3);
+                    debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
+		}
             }
-        } else if (game.upgrades.Formations.done && surviveX) {
+        }
+        else if (game.upgrades.Formations.done && surviveX) {
             //in lead challenge, switch to H if about to die, so doesn't just die in X mode without trying
-            if ((game.global.challengeActive == 'Lead') && (xHealth - missingHealth < xDamage + (xHealth * leadDamage)))
+            if ((game.global.challengeActive == 'Lead') && (xHealth - missingHealth < xDamage + (xHealth * leadDamage))) {
                 setFormation(1);
-            else
+                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
+	    }
+            else {
                 setFormation("0");
-        } else if (game.upgrades.Barrier.done && surviveB) {
+                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
+            }
+        }
+        else if (game.upgrades.Barrier.done && surviveB) {
             if (game.global.formation != 3) {
                 setFormation(3);    //does this ever run?
+                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
                 debug("AutoStance B/3","other");
             }
-        } else {
+        }
+        else {
             if (game.global.formation != 1) {
                 setFormation(1);    //the last thing that runs
+                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
             }
         }
     }
