@@ -12,7 +12,7 @@ MODULES["autobreedtimer"].voidCheckPercent = 95;    //Void Check health %, for f
 function autoBreedTimer() {
     var customVars = MODULES["autobreedtimer"];
     var fWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
-    var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
+    var newSquadRdy = game.global.lastBreedTime/1000 >= 30; 
     if(getPageSetting('ManageBreedtimer')) {
         if(game.portal.Anticipation.level == 0) setPageSetting('GeneticistTimer',0);
         else if(game.global.challengeActive == 'Electricity' || game.global.challengeActive == 'Mapocalypse') setPageSetting('GeneticistTimer',3.5);
