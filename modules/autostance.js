@@ -383,29 +383,24 @@ function autoStance2() {
             if (game.global.formation == "0" && game.global.soldierHealth - xDamage < bHealth){
                 if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth))
                     setFormation(3);
-                    debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
             }
             //else if we can totally block all crit damage in X mode, OR we can't survive-crit in D, but we can in X, switch to X.
             // NOTE: during next loop, the If-block above may immediately decide it wants to switch to B.
             else if (xDamage == 0 || ((game.global.formation == 2 || game.global.formation == 4) && voidCritinXok)){
                 setFormation("0");
-                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
             }
             //otherwise, stuff: (Try for B again)
             else {
                 if (game.global.formation == "0"){
                     if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth)) {
                         setFormation(3);
-                        debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
                     }
                     else {
                         setFormation(1);
-                        debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
                     }
                 }
                 else if (game.upgrades.Barrier.done && (game.global.formation == 2 || game.global.formation == 4)) {
                     setFormation(3);
-                    debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
 		}
             }
         }
@@ -413,24 +408,20 @@ function autoStance2() {
             //in lead challenge, switch to H if about to die, so doesn't just die in X mode without trying
             if ((game.global.challengeActive == 'Lead') && (xHealth - missingHealth < xDamage + (xHealth * leadDamage))) {
                 setFormation(1);
-                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
 	    }
             else {
                 setFormation("0");
-                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
             }
         }
         else if (game.upgrades.Barrier.done && surviveB) {
             if (game.global.formation != 3) {
                 setFormation(3);    //does this ever run?
-                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
                 debug("AutoStance B/3","other");
             }
         }
         else {
             if (game.global.formation != 1) {
                 setFormation(1);    //the last thing that runs
-                debug("AutoStance2: Switch from Dominance, health = " + (dHealth - missingHealth) + ", damage = " + dDamage + ", survive = " + surviveD);
             }
         }
     }
