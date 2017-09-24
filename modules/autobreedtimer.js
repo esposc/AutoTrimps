@@ -132,7 +132,7 @@ function forceAbandonTrimps() {
     //dont if <z6 (no button)
     if (!game.global.mapsUnlocked) return;
     //dont if were in a voidmap
-    if (game.global.mapsActive && getCurrentMapObject().location == "Void") return;
+    //if (game.global.mapsActive && getCurrentMapObject().location == "Void") return;
     //dont if were on map-selection screen.
     if (game.global.preMapsActive) return;
     //dont if we are in spire:
