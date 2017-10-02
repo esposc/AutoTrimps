@@ -12,7 +12,6 @@ MODULES["autobreedtimer"].voidCheckPercent = 95;    //Void Check health %, for f
 function autoBreedTimer() {
     var customVars = MODULES["autobreedtimer"];
     var fWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
-    var newSquadRdy = game.global.lastBreedTime/1000 >= 30; 
     if(getPageSetting('ManageBreedtimer')) {
         if(game.portal.Anticipation.level == 0) setPageSetting('GeneticistTimer',0);
         else if(game.global.challengeActive == 'Electricity' || game.global.challengeActive == 'Mapocalypse') setPageSetting('GeneticistTimer',3.5);
@@ -33,6 +32,7 @@ function autoBreedTimer() {
     var inScryerStance = (game.global.world >= 60 && game.global.highestLevelCleared >= 180) && game.global.formation == 4;
     //(inDamageStance||inScryerStance);
     var targetBreed = getPageSetting('GeneticistTimer');
+    var newSquadRdy = game.global.lastBreedTime/1000 >= targetBreed; 
     //if we need to hire geneticists
     //Don't hire geneticists if total breed time remaining is greater than our target breed time
     //Don't hire geneticists if we have already reached 30 anti stacks (put off further delay to next trimp group) //&& (game.global.lastBreedTime/1000 + getBreedTime(true) < targetBreed) 
@@ -85,7 +85,7 @@ function autoBreedTimer() {
 
     //Force Abandon Code (AutoTrimpicide):
     targetBreed = parseInt(getPageSetting('GeneticistTimer'));
-    newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
+    newSquadRdy = game.global.lastBreedTime/1000 >= targetBreed;
     var nextgrouptime = (game.global.lastBreedTime/1000);
     if  (targetBreed > 30) targetBreed = 30; //play nice with custom timers over 30.
     var newstacks = nextgrouptime >= targetBreed ? targetBreed : nextgrouptime;
@@ -132,7 +132,9 @@ function forceAbandonTrimps() {
     //dont if <z6 (no button)
     if (!game.global.mapsUnlocked) return;
     //dont if were in a voidmap
-    //if (game.global.mapsActive && getCurrentMapObject().location == "Void") return;
+    /* if (game.global.mapsActive && getCurrentMapObject().location == "Void") {
+	abandonVoidMap();
+    } */
     //dont if were on map-selection screen.
     if (game.global.preMapsActive) return;
     //dont if we are in spire:
