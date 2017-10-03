@@ -116,11 +116,14 @@ function abandonVoidMap() {
             if (game.portal.Anticipation.level) {
                 if (targetBreed == 0 || targetBreed == -1)
                     mapsClicked(true);
+		    mapsClicked();
                 else if (game.global.antiStacks == targetBreed)
                     mapsClicked(true);
+		    mapsClicked();
             }
             else
                 mapsClicked(true);
+		mapsClicked();
         }
 	else if (game.global.lastBreedTime/1000 >= targetBreed) {
 		mapsClicked(true);
