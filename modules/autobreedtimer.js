@@ -114,16 +114,19 @@ function abandonVoidMap() {
         if(voidCheckPercent < customVars.voidCheckPercent) {
             //only exit if it happened for reasons other than random losses of anti-stacks.
             if (game.portal.Anticipation.level) {
-                if (targetBreed == 0 || targetBreed == -1)
+                if (targetBreed == 0 || targetBreed == -1) {
                     mapsClicked(true);
 		    mapsClicked();
-                else if (game.global.antiStacks == targetBreed)
+		}
+                else if (game.global.antiStacks == targetBreed) {
                     mapsClicked(true);
 		    mapsClicked();
+		}
             }
-            else
+            else {
                 mapsClicked(true);
 		mapsClicked();
+	    }
         }
 	else if (game.global.lastBreedTime/1000 >= targetBreed) {
 		mapsClicked(true);
