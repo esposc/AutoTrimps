@@ -116,21 +116,17 @@ function abandonVoidMap() {
             if (game.portal.Anticipation.level) {
                 if (targetBreed == 0 || targetBreed == -1) {
                     mapsClicked(true);
-		    mapsClicked();
 		}
                 else if (game.global.antiStacks == targetBreed) {
                     mapsClicked(true);
-		    mapsClicked();
 		}
             }
             else {
                 mapsClicked(true);
-		mapsClicked();
 	    }
         }
 	else if (game.global.lastBreedTime/1000 >= targetBreed) {
 		mapsClicked(true);
-		mapsClicked();
 	}
         return;
     }
@@ -144,6 +140,8 @@ function forceAbandonTrimps() {
     //dont if were in a voidmap
     if (game.global.mapsActive && getCurrentMapObject().location == "Void") {
 	abandonVoidMap();
+	if (document.getElementById("tipCost").innerHTML != null)
+	    cancelToolTip();
     }
     //dont if were on map-selection screen.
     if (game.global.preMapsActive) return;
