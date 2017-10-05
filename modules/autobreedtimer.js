@@ -139,9 +139,7 @@ function forceAbandonTrimps() {
     if (!game.global.mapsUnlocked) return;
     //dont if were in a voidmap
     if (game.global.mapsActive && getCurrentMapObject().location == "Void") {
-	abandonVoidMap();
-	if (document.getElementById("tipCost").innerHTML != null)
-	    cancelToolTip();
+    	abandonVoidMap();
     }
     //dont if were on map-selection screen.
     if (game.global.preMapsActive) return;
@@ -168,5 +166,7 @@ function forceAbandonTrimps() {
             mapsClicked();
         mapsClicked();
     }
+    if (document.getElementById("tipCost").innerHTML != null)
+        cancelToolTip();
     debug("Killed your army! (to get " + targetBreed + " Anti-stacks). Trimpicide successful.","other");
 }
