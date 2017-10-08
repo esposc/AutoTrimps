@@ -115,18 +115,26 @@ function abandonVoidMap() {
             //only exit if it happened for reasons other than random losses of anti-stacks.
             if (game.portal.Anticipation.level) {
                 if (targetBreed == 0 || targetBreed == -1) {
+                    mapsClicked();
                     mapsClicked(true);
+                    cancelToolTip();
 		}
                 else if (game.global.antiStacks == targetBreed) {
+                    mapsClicked();
                     mapsClicked(true);
+                    cancelToolTip();
 		}
             }
             else {
-                mapsClicked(true);
+                    mapsClicked();
+                    mapsClicked(true);
+                    cancelToolTip();
 	    }
         }
 	else if (game.global.lastBreedTime/1000 >= targetBreed) {
-		mapsClicked(true);
+                    mapsClicked();
+                    mapsClicked(true);
+                    cancelToolTip();
 	}
         return;
     }
@@ -166,7 +174,7 @@ function forceAbandonTrimps() {
             mapsClicked();
         mapsClicked();
     }
-    if (document.getElementById("tipCost").innerHTML != null)
-        cancelToolTip();
+    if (document.getElementById("tipCost").innerHTML != null) {
+    }
     debug("Killed your army! (to get " + targetBreed + " Anti-stacks). Trimpicide successful.","other");
 }
