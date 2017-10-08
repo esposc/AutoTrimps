@@ -115,26 +115,18 @@ function abandonVoidMap() {
             //only exit if it happened for reasons other than random losses of anti-stacks.
             if (game.portal.Anticipation.level) {
                 if (targetBreed == 0 || targetBreed == -1) {
-                    mapsClicked();
                     mapsClicked(true);
-                    cancelToolTip();
 		}
                 else if (game.global.antiStacks == targetBreed) {
-                    mapsClicked();
                     mapsClicked(true);
-                    cancelToolTip();
 		}
             }
             else {
-                    mapsClicked();
                     mapsClicked(true);
-                    cancelToolTip();
 	    }
         }
 	else if (game.global.lastBreedTime/1000 >= targetBreed) {
-                    mapsClicked();
                     mapsClicked(true);
-                    cancelToolTip();
 	}
         return;
     }
