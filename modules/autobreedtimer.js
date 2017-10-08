@@ -111,23 +111,8 @@ function abandonVoidMap() {
     //exit out of the voidmap if we go back into void-farm-for-health mode (less than 95%, account for some leeway during equipment buying.)
     if (game.global.mapsActive && getCurrentMapObject().location == "Void") {        
         var targetBreed = parseInt(getPageSetting('GeneticistTimer'));
-        if(voidCheckPercent < customVars.voidCheckPercent) {
-            //only exit if it happened for reasons other than random losses of anti-stacks.
-            if (game.portal.Anticipation.level) {
-                if (targetBreed == 0 || targetBreed == -1) {
-                    mapsClicked(true);
-		}
-                else if (game.global.antiStacks == targetBreed) {
-                    mapsClicked(true);
-		}
-            }
-            else {
-                    mapsClicked(true);
-	    }
-        }
-	else if (game.global.lastBreedTime/1000 >= targetBreed) {
-                    mapsClicked(true);
-	}
+	if (game.global.lastBreedTime/1000 >= targetBreed)
+            mapsClicked(true);
         return;
     }
 }
@@ -137,9 +122,10 @@ function forceAbandonTrimps() {
     if (!getPageSetting('ForceAbandon')) return;
     //dont if <z6 (no button)
     if (!game.global.mapsUnlocked) return;
-    //dont if were in a voidmap
+    //if were in a voidmap
     if (game.global.mapsActive && getCurrentMapObject().location == "Void") {
     	abandonVoidMap();
+        return;
     }
     //dont if were on map-selection screen.
     if (game.global.preMapsActive) return;
