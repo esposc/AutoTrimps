@@ -197,17 +197,70 @@ function getBreedTime(remaining) {
     var trimps = game.resources.trimps;
     var trimpsMax = trimps.realMax();
 
-    var potencyMod = getPotencyMod();
     // <breeding per second> would be calced here without the following line in potencymod
-    potencyMod = (1 + (potencyMod / 10));
-    var timeRemaining = log10((trimpsMax - trimps.employed) / (trimps.owned - trimps.employed)) / log10(potencyMod);
-    timeRemaining /= 10;
+    var base = 0.0085;
+    var breeding = trimps.owned - trimps.employed;
+    var currentCalc = breeding * base;
+    //Add Potency
+    if (game.upgrades.Potency.done > 0){
+            var potencyStrength = Math.pow(1.1, game.upgrades.Potency.done);
+            currentCalc *= potencyStrength;
+    }
+    //Add Nurseries
+    if (game.buildings.Nursery.owned > 0){
+            var nurseryStrength = Math.pow(1.01, game.buildings.Nursery.owned);
+            currentCalc *= nurseryStrength;
+    }
+    //Add Venimp
+    if (game.unlocks.impCount.Venimp > 0){
+            var venimpStrength = Math.pow(1.003, game.unlocks.impCount.Venimp);
+            currentCalc *= (venimpStrength);
+    }
+    if (game.global.brokenPlanet){
+            currentCalc /= 10;
+    }
+    //Add pheromones
+    if (game.portal.Pheromones.level > 0){
+            var PheromonesStrength = (game.portal.Pheromones.level * game.portal.Pheromones.modifier);
+            currentCalc  *= (PheromonesStrength + 1);
+    }
+    //Add Geneticist
+    if (game.jobs.Geneticist.owned > 0) {
+            var mult = Math.pow(.98, game.jobs.Geneticist.owned);
+            currentCalc *= mult;
+    }
+    //Add quick trimps
+    if (game.unlocks.quickTrimps){
+            currentCalc *= 2;
+    }
+    if (game.global.challengeActive == "Daily"){
+            var mult = 0;
+            if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined'){
+                    mult = dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength);
+                    currentCalc *= mult;
+            }
+            if (typeof game.global.dailyChallenge.toxic !== 'undefined'){
+                    mult = dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks);
+                    currentCalc *= mult;
+            }
+    }
+    if (game.global.challengeActive == "Toxicity" && game.challenges.Toxicity.stacks > 0){
+            var potencyMod = Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks);
+            currentCalc *= potencyMod;
+    }
+    if (game.global.voidBuff == "slowBreed"){
+            currentCalc *= 0.2;
+    }
+    var heirloomBonus = calcHeirloomBonus("Shield", "breedSpeed", 0, true);
+    if (heirloomBonus > 0){
+            currentCalc *= ((heirloomBonus / 100) + 1);
+    }
+    timeRemaining = (trimps.realMax() - trimps.owned) / currentCalc
     if (remaining)
         return parseFloat(timeRemaining.toFixed(1));
 
     var adjustedMax = (game.portal.Coordinated.level) ? game.portal.Coordinated.currentSend : trimps.maxSoldiers;
-    var totalTime = log10((trimpsMax - trimps.employed) / (trimpsMax - adjustedMax - trimps.employed)) / log10(potencyMod);
-    totalTime /= 10;
+    var totalTime = (trimpsMax - trimps.owned - adjustedMax) / currentCalc;
 
     return parseFloat(totalTime.toFixed(1));
 }

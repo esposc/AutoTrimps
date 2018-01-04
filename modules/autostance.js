@@ -256,9 +256,10 @@ function autoStance2() {
     if (!getPageSetting('AutoStance')) return true;
     if (!game.upgrades.Formations.done) return true;
 
+    var targetBreed = parseInt(getPageSetting('GeneticistTimer'));
     //start analyzing autostance
     var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
-    var newSquadRdy = game.global.lastBreedTime/1000 >= 30;
+    var newSquadRdy = game.global.lastBreedTime/1000 >= targetBreed;
     var dHealth = baseHealth/2;
     var dmissingHealth = dHealth - game.global.soldierHealth;
     var xHealth = baseHealth;

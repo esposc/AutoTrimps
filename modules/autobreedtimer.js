@@ -12,6 +12,7 @@ MODULES["autobreedtimer"].voidCheckPercent = 95;    //Void Check health %, for f
 function autoBreedTimer() {
     var customVars = MODULES["autobreedtimer"];
     var fWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
+    var maxBreedtime = (game.talents.patience.purchased) ? 45 : 30;
     if(getPageSetting('ManageBreedtimer')) {
         if(game.portal.Anticipation.level == 0) setPageSetting('GeneticistTimer',0);
         else if(game.global.challengeActive == 'Electricity' || game.global.challengeActive == 'Mapocalypse') setPageSetting('GeneticistTimer',3.5);
@@ -19,14 +20,14 @@ function autoBreedTimer() {
 
             if(getPageSetting('FarmWhenNomStacks7') && game.global.gridArray[99].nomStacks >= 5 && !game.global.mapsActive) {
                 //if Improbability already has 5 nomstacks, do 30 antistacks.
-                setPageSetting('GeneticistTimer',30);
+                setPageSetting('GeneticistTimer',maxBreedtime);
             }
             else
                 setPageSetting('GeneticistTimer',10);
         }
         else if (getPageSetting('SpireBreedTimer') > -1 && game.global.world == 200 && game.global.spireActive)
             setPageSetting('GeneticistTimer',getPageSetting('SpireBreedTimer'));
-        else setPageSetting('GeneticistTimer',30);
+        else setPageSetting('GeneticistTimer',maxBreedtime);
     }
     var inDamageStance = game.upgrades.Dominance.done ? game.global.formation == 2 : game.global.formation == 0;
     var inScryerStance = (game.global.world >= 60 && game.global.highestLevelCleared >= 180) && game.global.formation == 4;
@@ -35,7 +36,7 @@ function autoBreedTimer() {
     var newSquadRdy = game.global.lastBreedTime/1000 >= targetBreed; 
     //if we need to hire geneticists
     //Don't hire geneticists if total breed time remaining is greater than our target breed time
-    //Don't hire geneticists if we have already reached 30 anti stacks (put off further delay to next trimp group) //&& (game.global.lastBreedTime/1000 + getBreedTime(true) < targetBreed) 
+    //Don't hire geneticists if we have already reached max anti stacks (put off further delay to next trimp group) //&& (game.global.lastBreedTime/1000 + getBreedTime(true) < targetBreed) 
     if ((newSquadRdy || (game.global.lastBreedTime/1000 + getBreedTime(true) < targetBreed)) && targetBreed > getBreedTime() && !game.jobs.Geneticist.locked && targetBreed > getBreedTime(true) && game.resources.trimps.soldiers > 0 && !breedFire) {
         var time = getBreedTime();
         var timeOK = time > 0 ? time : 0.1;
@@ -76,18 +77,18 @@ function autoBreedTimer() {
     }
     //if our time remaining to full trimps is still too high, fire some jobs to get-er-done
     //needs option to toggle? advanced options?
-    else if ((targetBreed < getBreedTime(true) || (game.resources.trimps.soldiers == 0 && getBreedTime(true) > customVars.breedFireOn)) && breedFire == false && getPageSetting('BreedFire') && game.global.world > 10) {
+    /*else if ((targetBreed < getBreedTime(true) || (game.resources.trimps.soldiers == 0 && getBreedTime(true) > customVars.breedFireOn)) && breedFire == false && getPageSetting('BreedFire') && game.global.world > 10) {
         breedFire = true;
     }
 
     //reset breedFire once we have less than 2 seconds remaining
-    if(getBreedTime(true) < customVars.breedFireOff) breedFire = false;
+    if(getBreedTime(true) < customVars.breedFireOff) breedFire = false;*/
 
     //Force Abandon Code (AutoTrimpicide):
     targetBreed = parseInt(getPageSetting('GeneticistTimer'));
     newSquadRdy = game.global.lastBreedTime/1000 >= targetBreed;
     var nextgrouptime = (game.global.lastBreedTime/1000);
-    if  (targetBreed > 30) targetBreed = 30; //play nice with custom timers over 30.
+    if  (targetBreed > maxBreedtime) targetBreed = maxBreedtime; //play nice with custom timers over 30.
     var newstacks = nextgrouptime >= targetBreed ? targetBreed : nextgrouptime;
     //kill titimp if theres less than (5) seconds left on it or, we stand to gain more than (5) antistacks.
     var killTitimp = (game.global.titimpLeft < customVars.killTitimpStacks || (game.global.titimpLeft >= customVars.killTitimpStacks && newstacks - game.global.antiStacks >= customVars.killTitimpStacks))
@@ -97,7 +98,7 @@ function autoBreedTimer() {
             forceAbandonTrimps();
         }
         //if we're sitting around breeding forever and over (5) anti stacks away from target.
-        else if (newSquadRdy && nextgrouptime >= 31 && newstacks - game.global.antiStacks >= customVars.killTitimpStacks) {
+        else if (newSquadRdy && nextgrouptime >= (maxBreedtime + 1) && newstacks - game.global.antiStacks >= customVars.killTitimpStacks) {
             forceAbandonTrimps();
         }
     }
