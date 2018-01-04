@@ -1,6 +1,23 @@
-> Due to a myriad of reasons, I am finding it difficult to keep this project on my plate. Thus, it is unfortunately my decision that I have to put this project on hold. While I would still be around to tackle things that I can fix in under a minute, like writing a short script to pause the script at zone X for you, I don't have the time to add features as I would had liked. It seems that there is a new fork maintained: https://github.com/coderpatsy/AutoTrimps While I have not used it to vow for its reliability, there is that option.
+## Esposc Disclaimer
+Forked from Uni's genBTC AutoTrimp's script. I have only made a few modifications to suite my endgame runs.
+
+## AutoStance2
+- Removing the worries about enemy crit causing stance changes. Crit enemies should be calculated into the block/health automagically
+- Stay in Dominance stance until your remaining heatlh w/ block and peirce will kill your squad
+- New Squad being ready is based on the global bread time. Dominance should always be set if total breed time is above the Geneticist timer
+
+## Anticipation
+- Changed areas where Anticipation calucation was set for 30s. Booleans allow up 45 if the mastery is purchased.
+- ForceAbandon in VoidMaps should work if Anticipation stacks are less than maximum
+
+## Breed Time
+- Now follows the calculations detailed by Trimps itself
+- Geneticists should be purchased/fired to keep the timer at the set breed timer value
+- Hopefully fixed the bug causing all Geneticists to be fired when breeding has reached 0
 
 # AutoTrimps-genBTC unimod
+> Due to a myriad of reasons, I am finding it difficult to keep this project on my plate. Thus, it is unfortunately my decision that I have to put this project on hold. While I would still be around to tackle things that I can fix in under a minute, like writing a short script to pause the script at zone X for you, I don't have the time to add features as I would had liked. It seems that there is a new fork maintained: https://github.com/coderpatsy/AutoTrimps While I have not used it to vow for its reliability, there is that option.
+
 Donate: <a href="https://paypal.me/unihedron">paypal.me/unihedron</a>
 
 Based on AutoTrimp-genBTC. Modified by Uni. <b>Not backwards compatible with AutoTrimps-genBTC due to optimized save format! Please beware and backup your AT configs!</b> Also, not guarranteed the work. The reason why I'm building a fork instead of submitting PRs is that I have no idea how it really works and need a way to crash test. Also I don't want to hold other maintainers from having to deal with the technical debt I cause. If any horrible code I wrote gets in your way, sorry!
