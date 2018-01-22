@@ -210,8 +210,8 @@ function buyJobs() {
     if (game.jobs.Magmamancer.locked) return;
     //game.jobs.Magmamancer.getBonusPercent(true);
     var timeOnZone = Math.floor((new Date().getTime() - game.global.zoneStarted) / 60000);
-    var stacks2 = Math.floor(timeOnZone / 10);
-    if (getPageSetting('AutoMagmamancers') && stacks2 > tierMagmamancers) {
+    if (game.talents.magmamancer.purchased) timeOnZone += 5 ;
+    if (getPageSetting('AutoMagmamancers') && timeOnZone > 10) {
         var old = preBuy2();
         game.global.firing = false;
         game.global.buyAmt = 'Max';
@@ -219,28 +219,25 @@ function buyJobs() {
         //fire dudes to make room.
         var firesomedudes = calculateMaxAfford(game.jobs['Magmamancer'], false, false, true);
         //fire (10x) as many workers as we need so "Max" (0.1) can work, because FreeWorkers are considered as part of the (10%) calc
-        var inverse = (1 /  MODULES["jobs"].magmamancerRatio);
-        firesomedudes *= inverse;
-        if (game.jobs.Farmer.owned > firesomedudes)
-            safeFireJob('Farmer', firesomedudes);
-        else if (game.jobs.Lumberjack.owned > firesomedudes)
-            safeFireJob('Lumberjack', firesomedudes);
-        else if (game.jobs.Miner.owned > firesomedudes)
-            safeFireJob('Miner', firesomedudes);
-        //buy the Magmamancers
-        game.global.firing = false;
-        game.global.buyAmt = 'Max';
-        game.global.maxSplit = MODULES["jobs"].magmamancerRatio;
-        buyJob('Magmamancer', true, true);
-        postBuy2(old);
-        debug("Bought " + (firesomedudes/inverse) + ' Magmamancers. Total Owned: ' + game.jobs['Magmamancer'].owned, "other", "*users");
-        tierMagmamancers += 1;
-    }
-    else if (stacks2 < tierMagmamancers) {
-        tierMagmamancers = 0;
+	if (firesomedudes > 1) {
+            var inverse = (1 /  MODULES["jobs"].magmamancerRatio);
+            firesomedudes *= inverse;
+            if (game.jobs.Farmer.owned > firesomedudes)
+                safeFireJob('Farmer', firesomedudes);
+            else if (game.jobs.Lumberjack.owned > firesomedudes)
+                safeFireJob('Lumberjack', firesomedudes);
+            else if (game.jobs.Miner.owned > firesomedudes)
+                safeFireJob('Miner', firesomedudes);
+            //buy the Magmamancers
+            game.global.firing = false;
+            game.global.buyAmt = 'Max';
+            game.global.maxSplit = MODULES["jobs"].magmamancerRatio;
+            buyJob('Magmamancer', true, true);
+            postBuy2(old);
+            debug("Bought " + (firesomedudes/inverse) + ' Magmamancers. Total Owned: ' + game.jobs['Magmamancer'].owned, "other", "*users");
+	}
     }
 }
-var tierMagmamancers = 0;
 
 
 function workerRatios() {
