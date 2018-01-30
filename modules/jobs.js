@@ -213,9 +213,6 @@ function buyJobs() {
     if (game.talents.magmamancer.purchased) timeOnZone += 5 ;
     if (getPageSetting('AutoMagmamancers') && timeOnZone > 10) {
         var old = preBuy2();
-        game.global.firing = false;
-        game.global.buyAmt = 'Max';
-        game.global.maxSplit = MODULES["jobs"].magmamancerRatio;    // (10%)
         //fire dudes to make room.
         var firesomedudes = calculateMaxAfford(game.jobs['Magmamancer'], false, false, true);
         //fire (10x) as many workers as we need so "Max" (0.1) can work, because FreeWorkers are considered as part of the (10%) calc
