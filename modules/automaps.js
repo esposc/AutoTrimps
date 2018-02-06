@@ -113,6 +113,11 @@ function autoMap() {
           skippedPrestige = !skippedPrestige;
         }
     }
+    // Check for Speed Explorer and consider it a Prestige
+    if (autoTrimpSettings.speedExplor.value && !needPrestige && !game.jobs.Explorer.locked) {
+        var booksNeeded = Math.floor((game.global.world - game.mapUnlocks.Speedexplorer.next) / (Math.floor((10 * autoTrimpSettings.speedExplor.value)/10)*10);
+        if (booksNeeded > 0) needPrestige = true;
+    }
 
 //START CALCULATING DAMAGES:
     //calculate crits (baseDamage was calced in function autoStance)    this is a weighted average of nonCrit + Crit. (somewhere in the middle)
