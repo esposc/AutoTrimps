@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         AutoTrimpsV2+esposc
-// @namespace    https://github.com/esposc/AutoTrimps
+// @namespace    https://raw.githubusercontent.com/esposc/AutoTrimps/beta/
 // @version      2.1.5.5u3-unimod-4-17-2017+Modular
 // @description  try to take over the world!
 // @author       zininzinin, spindrjr, belaith, ishakaru, genBTC, Unihedron
-// @include      *trimps.github.io*
+// @include      *raw.githubusercontent.com*
 // @include      *kongregate.com/games/GreenSatellite/trimps
 // @grant        none
 // ==/UserScript==
