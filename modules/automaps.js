@@ -114,7 +114,7 @@ function autoMap() {
         }
     }
     // Check for Speed Explorer and consider it a Prestige
-    if (autoTrimpSettings.speedExplor.value && !needPrestige && !game.jobs.Explorer.locked) {
+    if (autoTrimpSettings.SpeedExplor.value && !needPrestige && !game.jobs.Explorer.locked) {
         var booksNeeded = Math.floor((game.global.world - game.mapUnlocks.Speedexplorer.next)) / (Math.floor((10 * autoTrimpSettings.SpeedExplor.value)/10)*10);
         if (booksNeeded > 0) needPrestige = true;
     }
