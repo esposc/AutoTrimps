@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         AutoTrimpsV2+esposc
-// @namespace    https://raw.githubusercontent.com/esposc/AutoTrimps/beta/
+// @namespace    https://github.com/esposc/AutoTrimps
 // @version      2.1.5.5u3-unimod-4-17-2017+Modular
 // @description  try to take over the world!
 // @author       zininzinin, spindrjr, belaith, ishakaru, genBTC, Unihedron
-// @include      *raw.githubusercontent.com*
+// @include      *trimps.github.io*
 // @include      *kongregate.com/games/GreenSatellite/trimps
 // @grant        none
 // ==/UserScript==
@@ -15,7 +15,7 @@ var ATversion = '2.1.5.5u3-unimod-4-17-2017+Modular';
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////
 var atscript = document.getElementById('AutoTrimps-script')
-  , base = 'https://raw.githubusercontent.com/esposc/AutoTrimps/beta/'
+  , base = 'https://esposc.github.io/AutoTrimps/'
   , module = 'modules/'
   ;
 if (atscript !== null) {
