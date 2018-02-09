@@ -1,6 +1,12 @@
 ## Esposc Disclaimer
 Forked from Uni's genBTC AutoTrimp's script. I have only made a few modifications to suite my endgame runs.
+1.1
+## Custom Map Options
+- Speed Explorers, control how often to dive into maps to upgrade Explorers
+- Map Modifer select list (TESTING)
+- Jump extra map levels to grab Prestiges when using Poison (TESTING)
 
+1.0.1
 ## AutoStance2
 - Removing the worries about enemy crit causing stance changes. Crit enemies should be calculated into the block/health automagically
 - Stay in Dominance stance until your remaining heatlh w/ block and peirce will kill your squad
