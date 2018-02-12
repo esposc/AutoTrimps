@@ -43,6 +43,7 @@ var mapTimeEstimate = 0;
 var lastMapWeWereIn = null;
 var preSpireFarming = false;
 var spireTime = 0;
+var needPoisonPrestige = 0;
 
 //AutoMap - function originally created by Belaith (in 1971)
 //anything/everything to do with maps.
@@ -85,11 +86,7 @@ function autoMap() {
     var needPoisonPres = 0;
     if ((getPageSetting('ForcePresZ') >= 0) && (game.global.world >= getPageSetting('ForcePresZ'))) {
         const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
-        if (autoTrimpSettings.PoisonPres.enabled && currEmpower == "Poison" && game.global.world % 5 == 0 && prestigeList.some(prestige => game.mapUnlocks[prestige].last <= game.global.world)) {
-            if (game.global.world % 10 == 0) needPoisonPres = 5;
-            else needPoisonPres = 10;
-            needPrestige = true;
-        } else needPrestige = prestigeList.some(prestige => game.mapUnlocks[prestige].last <= game.global.world - 5);
+        needPrestige = prestigeList.some(prestige => game.mapUnlocks[prestige].last <= game.global.world - 5);
     } else
     //calculate if we are behind on unlocking prestiges
     needPrestige = prestige != "Off" && game.mapUnlocks[prestige].last <= game.global.world - 5 && game.global.challengeActive != "Frugal";
@@ -127,7 +124,15 @@ function autoMap() {
             needSpeedExplore = true;
         }
     }
-
+    // Poison Prestige enable
+    if ((getPageSetting('ForcePresZ') >= 0) && (game.global.world >= getPageSetting('ForcePresZ')) && !needPrestige) {
+        const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
+        if (autoTrimpSettings.PoisonPres.enabled && currEmpower == "Poison" && game.global.world % 5 == 0 && prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + 10)) {
+            if (game.global.world % 10 == 0) needPoisonPres = 5;
+            else needPoisonPres = 10;
+            needPrestige = false;
+        }
+    }
 //START CALCULATING DAMAGES:
     //calculate crits (baseDamage was calced in function autoStance)    this is a weighted average of nonCrit + Crit. (somewhere in the middle)
     ourBaseDamage = (baseDamage * (1-getPlayerCritChance()) + (baseDamage * getPlayerCritChance() * getPlayerCritDamageMult()));
@@ -532,11 +537,17 @@ function autoMap() {
             }
             else if (needPrestige) {
                 //debug("Choosing Prestige, world:" + (game.global.world + needPoisonPres) + ", map: " + (game.global.mapsOwnedArray[highestMap].level + needPoisonPres));
-                if (game.global.world + needPoisonPres == game.global.mapsOwnedArray[highestMap].level)
+                if (game.global.world  == game.global.mapsOwnedArray[highestMap].level)
                     selectedMap = game.global.mapsOwnedArray[highestMap].id;
                 else
                     selectedMap = "create";
             //if shouldFarm is true, use a siphonology adjusted map, as long as we aren't trying to prestige
+            }
+            else if (needPoisonPres > 0) {
+                if (game.global.world + needPoisonPres == game.global.mapsOwnedArray[highestMap].level)
+                    selectedMap = game.global.mapsOwnedArray[highestMap].id;
+                else
+                    selectedMap = "create";
             }
             else if (siphonMap != -1) {
                 //debug("Selecting siphon map");
@@ -630,9 +641,10 @@ function autoMap() {
             mapsClicked();  //go back
         }
         else if (selectedMap == "create") {
-            document.getElementById("mapLevelInput").value = needPrestige ? game.global.world : siphlvl;
-            if (needPoisonPres != 0) {
-                document.getElementById("advExtraLevelSelect").value = needPoisonPres
+            document.getElementById("mapLevelInput").value = (needPrestige || needPoisonPres > 0) ? game.global.world : siphlvl;
+            if (needPoisonPres > 0) {
+                debug(needPoisonPres);
+                document.getElementById("advExtraLevelSelect").value = needPoisonPres.toString();
             }
             var decrement;  //['size','diff','loot']
             var tier;   //taken from MODULES vars at the top of this file.
@@ -682,7 +694,7 @@ function autoMap() {
             else specModifier = '0'
          }
             // If we need a prestige that isn't just SpeedExplorer, use modifier prestigious
-            if (needPrestige && (!needSpeedExplore || needPoisonPres) && game.global.world > 134) specModifier.value = 'p'
+            if ((needPrestige || needPoisonPres > 0) && !needSpeedExplore && game.global.world > 134) specModifier.value = 'p'
             biomeAdvMapsSelect.value = useGardens ? "Plentiful" : tier[3];
             //choose spire level 199 or 200
             if (preSpireFarming && MODULES["automaps"].SpireFarm199Maps)
@@ -809,6 +821,7 @@ function updateAutoMapsStatus() {
     else if (preSpireFarming) status.innerHTML = 'Spire farming for ' + (spireTime >= 60 ? (spireTime / 60).toFixed(2) + 'h' : spireTime.toFixed(2) + 'm');
     else if (!game.global.mapsUnlocked) status.innerHTML = '&nbsp;';
     else if (needPrestige && !doVoids) status.innerHTML = 'Prestige';
+    //else if (needPoisonPrestige && !doVoids) status.innerHTML = 'Poison Prestige';
     else if (doVoids && voidCheckPercent == 0) status.innerHTML = 'Void Maps: ' + game.global.totalVoidMaps + ' remaining';
     else if (stackingTox) status.innerHTML = 'Getting Tox Stacks';
     else if (needToVoid && !doVoids && game.global.totalVoidMaps > 0) status.innerHTML = 'Prepping for Voids';
