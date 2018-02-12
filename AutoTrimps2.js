@@ -15,7 +15,7 @@ var ATversion = '2.1.5.5u3-unimod-4-17-2017+Modular';
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////
 var atscript = document.getElementById('AutoTrimps-script')
-  , base = 'https://esposc.github.io/AutoTrimps/'
+  , base = 'https://raw.githubusercontent.com/esposc/AutoTrimps/beta/'
   , module = 'modules/'
   ;
 if (atscript !== null) {
