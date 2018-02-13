@@ -720,9 +720,6 @@ function autoMap() {
             while ((updateMapCost(true) > game.resources.fragments.owned) && specModifierCheck && poisonPrestigeCheck) {
                 //Remove perfect check first
                 perfectCheck.checked = 'false'
-                debug("Before Cost: " + updateMapCost(true) + " " + (updateMapCost(true) > game.resources.fragments.owned));
-                debug("P: " + poisonPrestigeCheck + ":" + needPoisonPres + ", S: " + specModifierCheck + ":" + specModifierValue)
-                debug("L: " + lootAdvMapsRange.value + ", D: " + difficultyAdvMapsRange.value + ", S: " + sizeAdvMapsRange.value);
             //Decrement 1 - use priorities first:
                 //if we STILL cant afford the map, lower the loot slider (less loot)
                 while (decrement.indexOf('loot') > -1 && lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
