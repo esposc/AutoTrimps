@@ -117,7 +117,7 @@ function autoMap() {
     }
     // Check for Speed Explorer and consider it a Prestige
     var needSpeedExplore = false;
-    if (autoTrimpSettings.SpeedExplor.value && !needPrestige && !game.jobs.Explorer.locked) {
+    if (autoTrimpSettings.SpeedExplor.value > 0 && !needPrestige && !game.jobs.Explorer.locked) {
         var booksNeeded = Math.floor((game.global.world - game.mapUnlocks.Speedexplorer.next) / (Math.floor((10 * autoTrimpSettings.SpeedExplor.value)/10)*10));
         if (booksNeeded > 0) {
             needPrestige = true;
@@ -127,7 +127,7 @@ function autoMap() {
     // Poison Prestige enable
     if ((getPageSetting('ForcePresZ') >= 0) && (game.global.world >= getPageSetting('ForcePresZ')) && !needPrestige) {
         const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
-        if (autoTrimpSettings.PoisonPres.enabled && currEmpower == "Poison" && game.global.world % 5 == 0 && prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + 10)) {
+        if (autoTrimpSettings.PoisonPres.enabled && currEmpower == "Poison" && game.global.world % 5 == 0 && prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + (10 - (game.global.world % 10)))) {
             if (game.global.world % 10 == 0) needPoisonPres = 5;
             else needPoisonPres = 10;
             needPrestige = false;
@@ -242,7 +242,7 @@ function autoMap() {
     if (game.global.mapBonus >= customVars.maxMapBonus && !shouldFarm) shouldDoMaps = false;
     else if (game.global.mapBonus >= customVars.maxMapBonus && shouldFarm) shouldFarmLowerZone = getPageSetting('LowerFarmingZone');
     //do (1) map if we dont have enough health
-    else if (game.global.mapBonus < customVars.wantHealthMapBonus && !enoughHealth && !shouldDoMaps && !needPrestige) {
+    else if (game.global.mapBonus < customVars.wantHealthMapBonus && !enoughHealth && !shouldDoMaps && !(needPrestige || needPoisonPres > 0)) {
         shouldDoMaps = true;
         shouldDoHealthMaps = true;
     }
@@ -274,7 +274,7 @@ function autoMap() {
     }
     
     //Disable Farm mode if we have nothing left to farm for (prevent infinite farming)
-    if (shouldFarm && !needPrestige) {
+    if (shouldFarm && !(needPrestige || needPoisonPres)) {
         //check if we have cap to 10 equip on, and we are capped for all attack weapons
         var capped = areWeAttackLevelCapped();
         //check if we have any additional prestiges available to unlock:
@@ -311,7 +311,7 @@ function autoMap() {
         //force abandon army
         if(!game.global.mapsActive && !game.global.preMapsActive) {
             mapsClicked();
-            mapsClicked();
+            if (document.getElementById("mapsBtn").innerHTML == "Abandon Soldiers" ) mapsClicked();
         }
     }
     else stackingTox = false;
@@ -522,7 +522,7 @@ function autoMap() {
     }
 //MAPS CREATION pt1:
     //map if we don't have health/dmg or we need to clear void maps or if we are prestige mapping, and our set item has a new prestige available
-    if (shouldDoMaps || doVoids || needPrestige) {
+    if (shouldDoMaps || doVoids || needPrestige || needPoisonPres > 0) {
         //selectedMap = world here if we haven't set it to create yet, meaning we found appropriate high level map, or siphon map
         if (selectedMap == "world") {
             //if preSpireFarming x minutes is true, switch over from wood maps to metal maps.
@@ -573,7 +573,7 @@ function autoMap() {
         var repeatBionics = getPageSetting('RunBionicBeforeSpire') && game.global.bionicOwned >= 6;
         //if we are doing the right map, and it's not a norecycle (unique) map, and we aren't going to hit max map bonus
         //or repeatbionics is true and there are still prestige items available to get
-        if (selectedMap == game.global.currentMapId && (!getCurrentMapObject().noRecycle && (game.global.mapBonus < customVars.maxMapBonus-1 || shouldFarm || stackingTox || needPrestige || shouldDoSpireMaps) || repeatBionics)) {
+        if (selectedMap == game.global.currentMapId && (!getCurrentMapObject().noRecycle && (game.global.mapBonus < customVars.maxMapBonus-1 || shouldFarm || stackingTox || needPrestige || needPoisonPres > 0 || shouldDoSpireMaps) || repeatBionics)) {
             var targetPrestige = autoTrimpSettings.Prestige.selected;
             //make sure repeat map is on
             if (!game.global.repeatMap) {
@@ -609,10 +609,11 @@ function autoMap() {
             //if we should not be in the world, and the button is not already clicked, click map button once (and wait patiently until death)
             if (!game.global.switchToMaps){
                 mapsClicked();
+                if (document.getElementById("mapsBtn").innerHTML == "Abandon Soldiers" ) mapsClicked();
             }
             //Get Impatient/Abandon if: (need prestige / _NEED_ to do void maps / on lead in odd world.) AND (a new army is ready, OR _need_ to void map OR lead farming and we're almost done with the zone) (handle shouldDoWatchMaps elsewhere below)
             if ((!getPageSetting('PowerSaving') || (getPageSetting('PowerSaving') == 2) && doVoids) && game.global.switchToMaps && !shouldDoWatchMaps &&
-                (needPrestige || doVoids ||
+                (needPrestige || needPoisonPres > 0 || doVoids ||
                 (game.global.challengeActive == 'Lead' && game.global.world % 2 == 1) ||
                 (!enoughDamage && enoughHealth && game.global.lastClearedCell < 9) ||
                 (shouldFarm && game.global.lastClearedCell >= customVars.shouldFarmCell) ||
@@ -629,6 +630,7 @@ function autoMap() {
                     debug("Got perma-stuck on cell " + (game.global.lastClearedCell+2) + " during scryer stance. Are your scryer settings correct? Entering map to farm to fix it.");
                 }
                 mapsClicked();
+                if (document.getElementById("mapsBtn").innerHTML == "Abandon Soldiers" ) mapsClicked();
             }
         }
         //forcibly run watch maps (or click to restart voidmap?)
@@ -639,11 +641,11 @@ function autoMap() {
     } else if (game.global.preMapsActive) {
         if (selectedMap == "world") {
             mapsClicked();  //go back
+            if (document.getElementById("mapsBtn").innerHTML == "Abandon Soldiers" ) mapsClicked();
         }
         else if (selectedMap == "create") {
             document.getElementById("mapLevelInput").value = (needPrestige || needPoisonPres > 0) ? game.global.world : siphlvl;
             if (needPoisonPres > 0) {
-                debug(needPoisonPres);
                 document.getElementById("advExtraLevelSelect").value = needPoisonPres.toString();
             }
             var decrement;  //['size','diff','loot']
@@ -708,16 +710,19 @@ function autoMap() {
             }
             //set up various priorities for various situations
             if (updateMapCost(true) > game.resources.fragments.owned) {
-                if (needPrestige && !enoughDamage) decrement.push('diff');
+                if ((needPrestige || needPoisonPres > 0) && !enoughDamage) decrement.push('diff');
                 if (shouldFarm) decrement.push('size');
             }
         //Run one check with map specific modifier on
             var specModifierCheck = true;
             var specModifierValue = specModifier.value
             var poisonPrestigeCheck = true;
-            while (updateMapCost(true) > game.resources.fragments.owned && specModifierCheck && poisonPrestigeCheck) {
+            while ((updateMapCost(true) > game.resources.fragments.owned) && specModifierCheck && poisonPrestigeCheck) {
                 //Remove perfect check first
                 perfectCheck.checked = 'false'
+                debug("Before Cost: " + updateMapCost(true) + " " + (updateMapCost(true) > game.resources.fragments.owned));
+                debug("P: " + poisonPrestigeCheck + ":" + needPoisonPres + ", S: " + specModifierCheck + ":" + specModifierValue)
+                debug("L: " + lootAdvMapsRange.value + ", D: " + difficultyAdvMapsRange.value + ", S: " + sizeAdvMapsRange.value);
             //Decrement 1 - use priorities first:
                 //if we STILL cant afford the map, lower the loot slider (less loot)
                 while (decrement.indexOf('loot') > -1 && lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
@@ -749,7 +754,7 @@ function autoMap() {
                     sizeAdvMapsRange.value -= 1;
                 }
                 //if we still cant afford the map, remove the modifier, and reset all values
-                if (updateMapCost(true) > game.resources.fragments.owned && !specModifierCheck) {
+                if (updateMapCost(true) > game.resources.fragments.owned && specModifierCheck) {
                     specModifier.value = '0';
                     sizeAdvMapsRange.value = tier[0];
                     adjustMap('size', tier[0]);
@@ -759,7 +764,7 @@ function autoMap() {
                     adjustMap('loot', tier[2]);
                     specModifierCheck = false;
                 }
-                if (!specModifierCheck && poisonPrestigeCheck && needPoisonPres > 1) {
+                if (updateMapCost(true) > game.resources.fragments.owned && !specModifierCheck && poisonPrestigeCheck && needPoisonPres > 1) {
                     needPoisonPres -= 1;
                     document.getElementById("advExtraLevelSelect").value = needPoisonPres;
                     sizeAdvMapsRange.value = tier[0];
@@ -771,7 +776,7 @@ function autoMap() {
                     specModifierCheck = true;
                     specModifier.value = specModifierValue;
                 }
-                else if (poisonPrestigeCheck && (needPoisonPres == 1 || needPoisonPres == 5)) {
+                else if (updateMapCost(true) > game.resources.fragments.owned && poisonPrestigeCheck && (needPoisonPres == 1 || needPoisonPres == 5)) {
                     poisonPrestigeCheck = false;
                     document.getElementById("advExtraLevelSelect").value = 0;
                     sizeAdvMapsRange.value = tier[0];
@@ -781,9 +786,12 @@ function autoMap() {
                     lootAdvMapsRange.value = tier[2];
                     adjustMap('loot', tier[2]);
                 }
+                debug("After Cost: " + updateMapCost(true) + " " + (updateMapCost(true) > game.resources.fragments.owned));
+                debug("P: " + poisonPrestigeCheck + ":" + needPoisonPres + ", S: " + specModifierCheck + ":" + specModifierValue)
+                debug("L: " + lootAdvMapsRange.value + ", D: " + difficultyAdvMapsRange.value + ", S: " + sizeAdvMapsRange.value);
             }
         //if we can't afford the map we designed, pick our highest existing map
-            var maplvlpicked = document.getElementById("mapLevelInput").value;
+            var maplvlpicked = document.getElementById("mapLevelInput").value + parseInt(document.getElementById("advExtraLevelSelect").value);
             if (updateMapCost(true) > game.resources.fragments.owned) {
                 selectMap(game.global.mapsOwnedArray[highestMap].id);
                 debug("Can't afford the map we designed, #" + maplvlpicked , "maps", '*crying2');
