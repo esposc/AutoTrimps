@@ -682,21 +682,20 @@ function autoMap() {
                 perfectCheck.checked = true;
             }
             // Use client specific special modifier, prestigious not included
-	    var specModifier = document.getElementById('advSpecialSelect')
-            if (autoTrimpSettings.SpecModifier.selected != 'Off') {
-            if (autoTrimpSettings.SpecModifier.selected == 'Fast Attacks' && game.global.world > 59) specModifier.value = 'fa'
+        if (autoTrimpSettings.SpecModifier.selected != 'Off') {
+            if (autoTrimpSettings.SpecModifier.selected == 'Fast Attacks' && game.global.world > 59) document.getElementById('advSpecialSelect').value = 'fa'
             else if (autoTrimpSettings.SpecModifier.selected == 'Large Cache' && game.global.world > 59) specModier.value = 'lc'
-            else if (autoTrimpSettings.SpecModifier.selected == 'Small Savoury Cache' && game.global.world > 84) specModifier.value = 'ssc'
-            else if (autoTrimpSettings.SpecModifier.selected == 'Small Wooden Cache' && game.global.world > 84) specModifier.value = 'swc'
-            else if (autoTrimpSettings.SpecModifier.selected == 'Small Metal Cache' && game.global.world > 84) specModifier.value = 'smc'
-            else if (autoTrimpSettings.SpecModifier.selected == 'Huge Cache' && game.global.world > 159) specModifier.value = 'hc'
-            else if (autoTrimpSettings.SpecModifier.selected == 'Large Savory Cache' && game.global.world > 184) specModifier.value = 'lsc'
-            else if (autoTrimpSettings.SpecModifier.selected == 'Large Wooden Cache' && game.global.world > 184) specModifier.value = 'lwc'
-            else if (autoTrimpSettings.SpecModifier.selected == 'Large Metal Cache' && game.global.world > 184) specModifier.value = 'lmc'
-            else specModifier = '0'
+            else if (autoTrimpSettings.SpecModifier.selected == 'Small Savoury Cache' && game.global.world > 84) document.getElementById('advSpecialSelect').value = 'ssc'
+            else if (autoTrimpSettings.SpecModifier.selected == 'Small Wooden Cache' && game.global.world > 84) document.getElementById('advSpecialSelect').value = 'swc'
+            else if (autoTrimpSettings.SpecModifier.selected == 'Small Metal Cache' && game.global.world > 84) document.getElementById('advSpecialSelect').value = 'smc'
+            else if (autoTrimpSettings.SpecModifier.selected == 'Huge Cache' && game.global.world > 159) document.getElementById('advSpecialSelect').value = 'hc'
+            else if (autoTrimpSettings.SpecModifier.selected == 'Large Savory Cache' && game.global.world > 184) document.getElementById('advSpecialSelect').value = 'lsc'
+            else if (autoTrimpSettings.SpecModifier.selected == 'Large Wooden Cache' && game.global.world > 184) document.getElementById('advSpecialSelect').value = 'lwc'
+            else if (autoTrimpSettings.SpecModifier.selected == 'Large Metal Cache' && game.global.world > 184) document.getElementById('advSpecialSelect').value = 'lmc'
+            else document.getElementById('advSpecialSelect').value = '0'
          }
             // If we need a prestige that isn't just SpeedExplorer, use modifier prestigious
-            if ((needPrestige || needPoisonPres > 0) && !needSpeedExplore && game.global.world > 134) specModifier.value = 'p'
+            if ((needPrestige || needPoisonPres > 0) && !needSpeedExplore && game.global.world > 134) document.getElementById('advSpecialSelect').value = 'p'
             biomeAdvMapsSelect.value = useGardens ? "Plentiful" : tier[3];
             //choose spire level 199 or 200
             if (preSpireFarming && MODULES["automaps"].SpireFarm199Maps)
@@ -712,10 +711,11 @@ function autoMap() {
             if (updateMapCost(true) > game.resources.fragments.owned) {
                 if ((needPrestige || needPoisonPres > 0) && !enoughDamage) decrement.push('diff');
                 if (shouldFarm) decrement.push('size');
+                biomeAdvMapsSelect.value = "Random";
             }
         //Run one check with map specific modifier on
             var specModifierCheck = true;
-            var specModifierValue = specModifier.value
+            var specModifierValue = document.getElementById('advSpecialSelect').value
             var poisonPrestigeCheck = true;
             while ((updateMapCost(true) > game.resources.fragments.owned) && specModifierCheck && poisonPrestigeCheck) {
                 //Remove perfect check first
@@ -752,7 +752,7 @@ function autoMap() {
                 }
                 //if we still cant afford the map, remove the modifier, and reset all values
                 if (updateMapCost(true) > game.resources.fragments.owned && specModifierCheck) {
-                    specModifier.value = '0';
+                    document.getElementById('advSpecialSelect').value = '0';
                     sizeAdvMapsRange.value = tier[0];
                     adjustMap('size', tier[0]);
                     difficultyAdvMapsRange.value = tier[1];
@@ -763,7 +763,6 @@ function autoMap() {
                 }
                 if (updateMapCost(true) > game.resources.fragments.owned && !specModifierCheck && poisonPrestigeCheck && needPoisonPres > 1) {
                     needPoisonPres -= 1;
-                    document.getElementById("advExtraLevelSelect").value = needPoisonPres;
                     sizeAdvMapsRange.value = tier[0];
                     adjustMap('size', tier[0]);
                     difficultyAdvMapsRange.value = tier[1];
@@ -771,17 +770,11 @@ function autoMap() {
                     lootAdvMapsRange.value = tier[2];
                     adjustMap('loot', tier[2]);
                     specModifierCheck = true;
-                    specModifier.value = specModifierValue;
-                }
-                else if (updateMapCost(true) > game.resources.fragments.owned && poisonPrestigeCheck && (needPoisonPres == 1 || needPoisonPres == 5)) {
-                    poisonPrestigeCheck = false;
-                    document.getElementById("advExtraLevelSelect").value = 0;
-                    sizeAdvMapsRange.value = tier[0];
-                    adjustMap('size', tier[0]);
-                    difficultyAdvMapsRange.value = tier[1];
-                    adjustMap('difficulty', tier[1]);
-                    lootAdvMapsRange.value = tier[2];
-                    adjustMap('loot', tier[2]);
+                    document.getElementById('advSpecialSelect').value = specModifierValue;
+                    if (needPoisonPres == 0 || needPoisonPres == 5) {
+                        document.getElementById("advExtraLevelSelect").value = 0;
+                        poisonPrestigeCheck = false;
+                    }
                 }
                 debug("After Cost: " + updateMapCost(true) + " " + (updateMapCost(true) > game.resources.fragments.owned));
                 debug("P: " + poisonPrestigeCheck + ":" + needPoisonPres + ", S: " + specModifierCheck + ":" + specModifierValue)
