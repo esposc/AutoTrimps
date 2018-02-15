@@ -711,15 +711,17 @@ function autoMap() {
             if (updateMapCost(true) > game.resources.fragments.owned) {
                 if ((needPrestige || needPoisonPres > 0) && !enoughDamage) decrement.push('diff');
                 if (shouldFarm) decrement.push('size');
-                biomeAdvMapsSelect.value = "Random";
             }
         //Run one check with map specific modifier on
+            var biomeAdvMapsValue = biomeAdvMapsSelect.value;
             var specModifierCheck = true;
             var specModifierValue = document.getElementById('advSpecialSelect').value
             var poisonPrestigeCheck = true;
             while ((updateMapCost(true) > game.resources.fragments.owned) && specModifierCheck && poisonPrestigeCheck) {
-                //Remove perfect check first
-                perfectCheck.checked = 'false'
+            //Change biome to random
+                biomeAdvMapsSelect.value = "Random";
+            //Remove perfect check 
+                if (updateMapCost(true) > game.resources.fragments.owned) perfectCheck.checked = 'false'
             //Decrement 1 - use priorities first:
                 //if we STILL cant afford the map, lower the loot slider (less loot)
                 while (decrement.indexOf('loot') > -1 && lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
@@ -759,6 +761,7 @@ function autoMap() {
                     adjustMap('difficulty', tier[1]);
                     lootAdvMapsRange.value = tier[2];
                     adjustMap('loot', tier[2]);
+                    biomeAdvMapsSelect.value = biomeAdvMapsValue;
                     specModifierCheck = false;
                 }
                 if (updateMapCost(true) > game.resources.fragments.owned && !specModifierCheck && poisonPrestigeCheck && needPoisonPres > 1) {
@@ -769,6 +772,7 @@ function autoMap() {
                     adjustMap('difficulty', tier[1]);
                     lootAdvMapsRange.value = tier[2];
                     adjustMap('loot', tier[2]);
+                    biomeAdvMapsSelect.value = biomeAdvMapsValue;
                     specModifierCheck = true;
                     document.getElementById('advSpecialSelect').value = specModifierValue;
                     if (needPoisonPres == 0 || needPoisonPres == 5) {
@@ -777,7 +781,7 @@ function autoMap() {
                     }
                 }
                 debug("After Cost: " + updateMapCost(true) + " " + (updateMapCost(true) > game.resources.fragments.owned));
-                debug("P: " + poisonPrestigeCheck + ":" + needPoisonPres + ", S: " + specModifierCheck + ":" + specModifierValue)
+                debug("P: " + poisonPrestigeCheck + ":" + needPoisonPres + ", S: " + specModifierCheck + ":" + specModifierValue, " , B: " + biomeAdvMapsSelect.value)
                 debug("L: " + lootAdvMapsRange.value + ", D: " + difficultyAdvMapsRange.value + ", S: " + sizeAdvMapsRange.value);
             }
         //if we can't afford the map we designed, pick our highest existing map
