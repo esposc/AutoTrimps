@@ -128,7 +128,6 @@ function autoMap() {
     if ((getPageSetting('ForcePresZ') >= 0) && (game.global.world >= getPageSetting('ForcePresZ')) && !needPrestige && autoTrimpSettings.PoisonPres.enabled && getEmpowerment() == "Poison" && game.global.world % 5 == 0 ) {
             needPoisonPres = poisonPrestigeLvl();
             if (needPoisonPres > 0) needPrestige = false;
-        }
     }
 //START CALCULATING DAMAGES:
     //calculate crits (baseDamage was calced in function autoStance)    this is a weighted average of nonCrit + Crit. (somewhere in the middle)
