@@ -849,11 +849,9 @@ function poisonPrestigeLvl() {
     }
     const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
     if ( prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + (extraLvl - (game.global.world % 10)))) {
-        if (game.global.world % 10 == 0) {
-            return extraLvl - 5;
-        } else {
-            return extraLvl;
-        }
+        if (game.global.world % 10 == 0) return extraLvl - 5;
+        else return extraLvl;
+    }
 }
 
 //update the UI with stuff from automaps.
