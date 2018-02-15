@@ -812,24 +812,7 @@ function autoMap() {
     }
 }
 
-function poisonPrestigeLvl() {
-    //If the highest Map level is greater than the current world, we couldn't afford higher extra zones
-    var obj = {};
-    for (var map in game.global.mapsOwnedArray) {
-        if (!game.global.mapsOwnedArray[map].noRecycle) {
-            obj[map] = game.global.mapsOwnedArray[map].level;
-        }
-    }
-    var keysSorted = Object.keys(obj).sort(function(a, b) {
-        return obj[b] - obj[a];
-    });
-    var highestMap;
-    if (keysSorted[0])
-        highestMap = keysSorted[0];
-    if (game.global.mapsOwnedArray[highestMap].level > game.global.world) {
-        return (game.global.mapsOwnedArray[highestMap].level - game.global.world);
-    }
-    
+function poisonPrestigeLvl() {    
     var prestige = autoTrimpSettings.Prestige.selected;
     var extraLvl = 0;
     if (prestige == 'Supershield' || prestige == 'Dagadder' || prestige == 'Bootboost') {
@@ -848,8 +831,24 @@ function poisonPrestigeLvl() {
         extraLvl = 10;
     }
     const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
-    if ( prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + (extraLvl - (game.global.world % 10)))) {
-        if (game.global.world % 10 == 0) return extraLvl - 5;
+    if ( prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + (extraLvl + ((game.global.world % 10) - 5 )))) {
+            //If the highest Map level is greater than the current world, we couldn't afford higher extra zones
+        var obj = {};
+        for (var map in game.global.mapsOwnedArray) {
+            if (!game.global.mapsOwnedArray[map].noRecycle) {
+                obj[map] = game.global.mapsOwnedArray[map].level;
+            }
+        }
+        var keysSorted = Object.keys(obj).sort(function(a, b) {
+            return obj[b] - obj[a];
+        });
+        var highestMap;
+        if (keysSorted[0])
+            highestMap = keysSorted[0];
+        if (game.global.mapsOwnedArray[highestMap].level > game.global.world) {
+            return (game.global.mapsOwnedArray[highestMap].level - game.global.world);
+        }
+        else if (game.global.world % 10 == 0) return extraLvl - 5;
         else return extraLvl;
     }
 }
