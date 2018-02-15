@@ -558,8 +558,9 @@ function autoMap() {
 //LEAD EVEN ZONE EXIT
     //don't map on even worlds if on Lead Challenge, except if person is dumb and wants to void on even
     if(game.global.challengeActive == 'Lead' && !doVoids && (game.global.world % 2 == 0 || game.global.lastClearedCell < customVars.shouldFarmCell)) {
-        if(game.global.preMapsActive)
+        if(game.global.preMapsActive) {
             mapsClicked();
+        }
         return; //exit
     }
 //REPEAT BUTTON:
