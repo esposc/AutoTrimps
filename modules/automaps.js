@@ -544,7 +544,7 @@ function autoMap() {
             //if shouldFarm is true, use a siphonology adjusted map, as long as we aren't trying to prestige
             }
             else if (needPoisonPres > 0) {
-                if (game.global.world + needPoisonPres == game.global.mapsOwnedArray[highestMap].level)
+                if (game.global.mapsOwnedArray[highestMap].level > game.global.mapsOwnedArray[highestMap].level)
                     selectedMap = game.global.mapsOwnedArray[highestMap].id;
                 else
                     selectedMap = "create";
