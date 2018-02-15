@@ -125,12 +125,9 @@ function autoMap() {
         }
     }
     // Poison Prestige enable
-    if ((getPageSetting('ForcePresZ') >= 0) && (game.global.world >= getPageSetting('ForcePresZ')) && !needPrestige) {
-        const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
-        if (autoTrimpSettings.PoisonPres.enabled && currEmpower == "Poison" && game.global.world % 5 == 0 && prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + (10 - (game.global.world % 10)))) {
-            if (game.global.world % 10 == 0) needPoisonPres = 5;
-            else needPoisonPres = 10;
-            needPrestige = false;
+    if ((getPageSetting('ForcePresZ') >= 0) && (game.global.world >= getPageSetting('ForcePresZ')) && !needPrestige && autoTrimpSettings.PoisonPres.enabled && getEmpowerment() == "Poison" && game.global.world % 5 == 0 ) {
+            needPoisonPres = poisonPrestigeLvl();
+            if (needPoisonPres > 0) needPrestige = false;
         }
     }
 //START CALCULATING DAMAGES:
@@ -274,7 +271,7 @@ function autoMap() {
     }
     
     //Disable Farm mode if we have nothing left to farm for (prevent infinite farming)
-    if (shouldFarm && !(needPrestige || needPoisonPres)) {
+    if (shouldFarm && !(needPrestige || needPoisonPres > 0)) {
         //check if we have cap to 10 equip on, and we are capped for all attack weapons
         var capped = areWeAttackLevelCapped();
         //check if we have any additional prestiges available to unlock:
@@ -813,6 +810,50 @@ function autoMap() {
             lastMapWeWereIn = getCurrentMapObject();
         }
     }
+}
+
+function poisonPrestigeLvl() {
+    //If the highest Map level is greater than the current world, we couldn't afford higher extra zones
+    var obj = {};
+    for (var map in game.global.mapsOwnedArray) {
+        if (!game.global.mapsOwnedArray[map].noRecycle) {
+            obj[map] = game.global.mapsOwnedArray[map].level;
+        }
+    }
+    var keysSorted = Object.keys(obj).sort(function(a, b) {
+        return obj[b] - obj[a];
+    });
+    var highestMap;
+    if (keysSorted[0])
+        highestMap = keysSorted[0];
+    if (game.global.mapsOwnedArray[highestMap].level > game.global.world) {
+        return (game.global.mapsOwnedArray[highestMap].level - game.global.world);
+    }
+    
+    var prestige = autoTrimpSettings.Prestige.selected;
+    var extraLvl = 0;
+    if (prestige == 'Supershield' || prestige == 'Dagadder' || prestige == 'Bootboost') {
+        extraLvl = 6;
+    }
+    else if (prestige == 'Megamace' || prestige == 'Hellishmet') {
+        extraLvl = 7;
+    }
+    else if (prestige == 'Polierarm' || prestige == 'Pantastic') {
+        extraLvl = 8;
+    }
+    else if (prestige == 'Axeidic' || prestige == 'Smoldershoulder') {
+        extraLvl = 9;
+    }
+    else if (prestige == 'Greatersword' || prestige == 'Harmbalest' || prestige == 'Bestplate' || prestige == 'GambesOP') {
+        extraLvl = 10;
+    }
+    const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
+    if ( prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + (extraLvl - (game.global.world % 10)))) {
+        if (game.global.world % 10 == 0) {
+            return extraLvl - 5;
+        } else {
+            return extraLvl;
+        }
 }
 
 //update the UI with stuff from automaps.
