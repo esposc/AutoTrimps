@@ -41,6 +41,7 @@ var scryerStuck = false;
 var shouldDoMaps = false;
 var mapTimeEstimate = 0;
 var lastMapWeWereIn = null;
+var lastPrestigeMapWeWereIn = null;
 var preSpireFarming = false;
 var spireTime = 0;
 var needPoisonPrestige = 0;
@@ -127,7 +128,7 @@ function autoMap() {
     // Poison Prestige enable
     if ((getPageSetting('ForcePresZ') >= 0) && (game.global.world >= getPageSetting('ForcePresZ')) && !needPrestige && autoTrimpSettings.PoisonPres.enabled && getEmpowerment() == "Poison" && game.global.world % 5 == 0 ) {
             needPoisonPres = poisonPrestigeLvl();
-            if (needPoisonPres > 0) needPrestige = false;
+            if (needPoisonPres > 0) needPrestige = true;
     }
 //START CALCULATING DAMAGES:
     //calculate crits (baseDamage was calced in function autoStance)    this is a weighted average of nonCrit + Crit. (somewhere in the middle)
@@ -531,19 +532,19 @@ function autoMap() {
                     selectedMap = "create";
             //if needPrestige, TRY to find current level map as the highest level map we own.
             }
-            else if (needPrestige) {
-                //debug("Choosing Prestige, world:" + (game.global.world + needPoisonPres) + ", map: " + (game.global.mapsOwnedArray[highestMap].level + needPoisonPres));
-                if (game.global.world  == game.global.mapsOwnedArray[highestMap].level)
-                    selectedMap = game.global.mapsOwnedArray[highestMap].id;
-                else
-                    selectedMap = "create";
-            //if shouldFarm is true, use a siphonology adjusted map, as long as we aren't trying to prestige
-            }
             else if (needPoisonPres > 0) {
                 if (game.global.mapsOwnedArray[highestMap].level > game.global.mapsOwnedArray[highestMap].level)
                     selectedMap = game.global.mapsOwnedArray[highestMap].id;
                 else
                     selectedMap = "create";
+            }
+            else if (needPrestige) {
+                //debug("Choosing Prestige, world:" + (game.global.world + needPoisonPres) + ", map: " + (game.global.mapsOwnedArray[highestMap].level + needPoisonPres));
+                if (game.global.world == game.global.mapsOwnedArray[highestMap].level)
+                    selectedMap = game.global.mapsOwnedArray[highestMap].id;
+                else
+                    selectedMap = "create";
+            //if shouldFarm is true, use a siphonology adjusted map, as long as we aren't trying to prestige
             }
             else if (siphonMap != -1) {
                 //debug("Selecting siphon map");
@@ -711,10 +712,8 @@ function autoMap() {
             }
         //Run one check with map specific modifier on
             var biomeAdvMapsValue = biomeAdvMapsSelect.value;
-            var specModifierCheck = true;
             var specModifierValue = document.getElementById('advSpecialSelect').value
-            var poisonPrestigeCheck = true;
-            while ((updateMapCost(true) > game.resources.fragments.owned) && specModifierCheck && poisonPrestigeCheck) {
+            while ((updateMapCost(true) > game.resources.fragments.owned)) {
             //Change biome to random
                 biomeAdvMapsSelect.value = "Random";
             //Remove perfect check 
@@ -750,7 +749,7 @@ function autoMap() {
                     sizeAdvMapsRange.value -= 1;
                 }
                 //if we still cant afford the map, remove the modifier, and reset all values
-                if (updateMapCost(true) > game.resources.fragments.owned && specModifierCheck) {
+                if (updateMapCost(true) > game.resources.fragments.owned && document.getElementById('advSpecialSelect').value != '0') {
                     document.getElementById('advSpecialSelect').value = '0';
                     sizeAdvMapsRange.value = tier[0];
                     adjustMap('size', tier[0]);
@@ -761,7 +760,8 @@ function autoMap() {
                     biomeAdvMapsSelect.value = biomeAdvMapsValue;
                     specModifierCheck = false;
                 }
-                if (updateMapCost(true) > game.resources.fragments.owned && !specModifierCheck && poisonPrestigeCheck && needPoisonPres > 1) {
+                //if we cant afford Extra Levels w/o modifier, decrease extra level and reset
+                else if (updateMapCost(true) > game.resources.fragments.owned && needPoisonPres > 0) {
                     needPoisonPres -= 1;
                     sizeAdvMapsRange.value = tier[0];
                     adjustMap('size', tier[0]);
@@ -770,15 +770,18 @@ function autoMap() {
                     lootAdvMapsRange.value = tier[2];
                     adjustMap('loot', tier[2]);
                     biomeAdvMapsSelect.value = biomeAdvMapsValue;
-                    specModifierCheck = true;
                     document.getElementById('advSpecialSelect').value = specModifierValue;
                     if (needPoisonPres == 0 || needPoisonPres == 5) {
                         document.getElementById("advExtraLevelSelect").value = 0;
-                        poisonPrestigeCheck = false;
+                        lastPrestigeMapWeWereIn = lastMapWeWereIn;
+                    } else {
+                        document.getElementById("advExtraLevelSelect").value = needPoisonPres;
                     }
                 }
+                // If we reached the bare minimum, and still can't afford, quit checking 
+                else if (updateMapCost(true) > game.resources.fragments.owned) break;
                 debug("After Cost: " + updateMapCost(true) + " " + (updateMapCost(true) > game.resources.fragments.owned));
-                debug("P: " + poisonPrestigeCheck + ":" + needPoisonPres + ", S: " + specModifierCheck + ":" + specModifierValue, " , B: " + biomeAdvMapsSelect.value)
+                debug("P: " + needPoisonPres + ", S: " + specModifierValue, " , B: " + biomeAdvMapsSelect.value)
                 debug("L: " + lootAdvMapsRange.value + ", D: " + difficultyAdvMapsRange.value + ", S: " + sizeAdvMapsRange.value);
             }
         //if we can't afford the map we designed, pick our highest existing map
@@ -845,8 +848,10 @@ function poisonPrestigeLvl() {
         var highestMap;
         if (keysSorted[0])
             highestMap = keysSorted[0];
-        if (game.global.mapsOwnedArray[highestMap].level > game.global.world) {
-            return (game.global.mapsOwnedArray[highestMap].level - game.global.world);
+        if (lastPrestigeMapWeWereIn.level == game.global.world)
+            return 0;
+        else if (game.global.mapsOwnedArray[highestMap].level > game.global.world) {
+            return (game.global.mapsOwnedArray[highestMap].level - game.global.world)
         }
         else if (game.global.world % 10 == 0) return extraLvl - 5;
         else return extraLvl;
