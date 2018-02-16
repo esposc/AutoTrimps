@@ -533,7 +533,7 @@ function autoMap() {
             //if needPrestige, TRY to find current level map as the highest level map we own.
             }
             else if (needPoisonPres > 0) {
-                if (game.global.mapsOwnedArray[highestMap].level > game.global.mapsOwnedArray[highestMap].level)
+                if (game.global.mapsOwnedArray[highestMap].level > game.global.world)
                     selectedMap = game.global.mapsOwnedArray[highestMap].id;
                 else
                     selectedMap = "create";
@@ -848,11 +848,10 @@ function poisonPrestigeLvl() {
         var highestMap;
         if (keysSorted[0])
             highestMap = keysSorted[0];
-        if (lastPrestigeMapWeWereIn.level == game.global.world)
-            return 0;
-        else if (game.global.mapsOwnedArray[highestMap].level > game.global.world) {
+        if (game.global.mapsOwnedArray[highestMap].level > game.global.world) {
             return (game.global.mapsOwnedArray[highestMap].level - game.global.world)
         }
+        else if (lastPrestigeMapWeWereIn && lastPrestigeMapWeWereIn.level == game.global.world) return 0;
         else if (game.global.world % 10 == 0) return extraLvl - 5;
         else return extraLvl;
     }
