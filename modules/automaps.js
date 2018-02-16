@@ -44,7 +44,7 @@ var lastMapWeWereIn = null;
 var lastPrestigeMapWeWereIn = null;
 var preSpireFarming = false;
 var spireTime = 0;
-var needPoisonPrestige = 0;
+var needPoisonPres = 0;
 
 //AutoMap - function originally created by Belaith (in 1971)
 //anything/everything to do with maps.
@@ -842,7 +842,7 @@ function poisonPrestigeLvl() {
             else prestige = 'GambesOP'
         }
         const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
-        if ( !prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + (extraLvl + ((game.global.world % 10) - 5 ))) ) extraLvl = 0;
+        if ( !game.mapUnlocks[prestige].last <= (game.global.world + (extraLvl + ((game.global.world % 10) - 5 ))) ) extraLvl = 0;
     }
     else if (lastPrestigeMapWeWereIn != null && lastPrestigeMapWeWereIn.level == game.global.world) {
         extraLvl = 0;
@@ -864,11 +864,12 @@ function poisonPrestigeLvl() {
             extraLvl = 10;
         }
         const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
-        if ( prestigeList.some(prestige => game.mapUnlocks[prestige].last <= (game.global.world) + (extraLvl + ((game.global.world % 10) - 5 ))) ) {
+        if ( game.mapUnlocks[prestige].last <= (game.global.world) + (extraLvl + ((game.global.world % 10) - 5 )) ) {
             //If the highest Map level is greater than the current world, we couldn't afford higher extra zones
             if (game.global.world % 10 == 0) extraLvl -= 5;
         }
     }
+    debug("Extra Levels?:" + extraLvl);
     return extraLvl;
 }
 
@@ -879,8 +880,8 @@ function updateAutoMapsStatus() {
     if(!autoTrimpSettings.AutoMaps.enabled) status.innerHTML = 'Off';
     else if (preSpireFarming) status.innerHTML = 'Spire farming for ' + (spireTime >= 60 ? (spireTime / 60).toFixed(2) + 'h' : spireTime.toFixed(2) + 'm');
     else if (!game.global.mapsUnlocked) status.innerHTML = '&nbsp;';
+    else if (needPoisonPres > 0 && !doVoids) status.innerHTML = 'Poison Prestige';
     else if (needPrestige && !doVoids) status.innerHTML = 'Prestige';
-    //else if (needPoisonPrestige && !doVoids) status.innerHTML = 'Poison Prestige';
     else if (doVoids && voidCheckPercent == 0) status.innerHTML = 'Void Maps: ' + game.global.totalVoidMaps + ' remaining';
     else if (stackingTox) status.innerHTML = 'Getting Tox Stacks';
     else if (needToVoid && !doVoids && game.global.totalVoidMaps > 0) status.innerHTML = 'Prepping for Voids';
