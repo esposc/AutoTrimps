@@ -869,7 +869,7 @@ function poisonPrestigeLvl() {
             if (game.global.world % 10 == 0) extraLvl -= 5;
         }
     }
-    debug("Extra Levels?:" + extraLvl);
+    //debug("Extra Levels?:" + extraLvl);
     return extraLvl;
 }
 
