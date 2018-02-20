@@ -522,6 +522,7 @@ function autoMap() {
     if (shouldDoMaps || doVoids || needPrestige || needPoisonPres > 0) {
         //selectedMap = world here if we haven't set it to create yet, meaning we found appropriate high level map, or siphon map
         if (selectedMap == "world") {
+            //debug("Poison Prestige Level: " + needPoisonPres);
             //if preSpireFarming x minutes is true, switch over from wood maps to metal maps.
             if (preSpireFarming) {
                 //debug("Selecting Spire farming map");
@@ -537,6 +538,7 @@ function autoMap() {
                     selectedMap = game.global.mapsOwnedArray[highestMap].id;
                 else
                     selectedMap = "create";
+                //debug("Poison Prestige Map: " + game.global.mapsOwnedArray[highestMap].level);
             }
             else if (needPrestige) {
                 //debug("Choosing Prestige, world:" + (game.global.world + needPoisonPres) + ", map: " + (game.global.mapsOwnedArray[highestMap].level + needPoisonPres));
@@ -578,7 +580,7 @@ function autoMap() {
                 repeatClicked();
             }
             //if we aren't here for dmg/hp, and we see the prestige we are after on the last cell of this map, and it's the last one available, turn off repeat to avoid an extra map cycle
-            if (!shouldDoMaps && (game.global.mapGridArray[game.global.mapGridArray.length - 1].special == targetPrestige && game.mapUnlocks[targetPrestige].last >= game.global.world - 9 )) {
+            if (!shouldDoMaps && (game.global.mapGridArray[game.global.mapGridArray.length - 1].special == targetPrestige && game.mapUnlocks[targetPrestige].last >= game.global.world - 9 + needPoisonPres)) {
                 repeatClicked();
             }
             //avoid another map cycle due to having the amount of tox stacks we need.
@@ -841,8 +843,7 @@ function poisonPrestigeLvl() {
             if (game.equipment.Gambeson.locked) prestige = 'Bestplate'
             else prestige = 'GambesOP'
         }
-        const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
-        if ( !game.mapUnlocks[prestige].last <= (game.global.world + (extraLvl + ((game.global.world % 10) - 5 ))) ) extraLvl = 0;
+        if ( !(game.mapUnlocks[prestige].last <= game.global.world + extraLvl) ) extraLvl = 0;
     }
     else if (lastPrestigeMapWeWereIn != null && lastPrestigeMapWeWereIn.level == game.global.world) {
         extraLvl = 0;
@@ -863,13 +864,11 @@ function poisonPrestigeLvl() {
         else if (prestige == 'Greatersword' || prestige == 'Harmbalest' || prestige == 'Bestplate' || prestige == 'GambesOP') {
             extraLvl = 10;
         }
-        const prestigeList = ['Supershield','Dagadder','Megamace','Polierarm','Axeidic','Greatersword','Harmbalest','Bootboost','Hellishmet','Pantastic','Smoldershoulder','Bestplate','GambesOP'];
         if ( game.mapUnlocks[prestige].last <= (game.global.world) + (extraLvl + ((game.global.world % 10) - 5 )) ) {
             //If the highest Map level is greater than the current world, we couldn't afford higher extra zones
             if (game.global.world % 10 == 0) extraLvl -= 5;
         }
     }
-    //debug("Extra Levels?:" + extraLvl);
     return extraLvl;
 }
 
