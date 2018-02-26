@@ -119,7 +119,7 @@ ratios1.appendChild(ratioPresetLabel);
 ratios1.appendChild(ratioPreset);
 //
 customRatios.appendChild(ratios2);
-Line3
+//Line3
 var ratios3 = document.createElement("DIV");
 ratios3.setAttribute('style', 'display: inline-block; text-align: left; width: 100%');
 var listratios3 = ["Capable","Cunning","Curious"];
