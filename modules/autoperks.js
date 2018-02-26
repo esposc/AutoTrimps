@@ -563,9 +563,6 @@ var resilience = new AutoPerks.VariablePerk("resilience", 100, true,       7, 0.
 var coordinated = new AutoPerks.VariablePerk("coordinated", 150000, true,  8, 0.1);
 var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,   9, 0.05);
 var overkill = new AutoPerks.VariablePerk("overkill", 1000000, true,       10, 0.005, 30);
-var capable = new AutoPerks.VariablePerk("capable", 100000000, true,       11, 0.005, 10);
-var cunning = new AutoPerks.VariablePerk("cunning", 100000000000, true,    12, 0.005);
-var curious = new AutoPerks.VariablePerk("curious", 100000000000000, true, 13, 0.005);
 //tier2 perks
 var toughness_II = new AutoPerks.ArithmeticPerk("toughness_II", 20000, 500, 0.01, toughness);
 var power_II = new AutoPerks.ArithmeticPerk("power_II", 20000, 500, 0.01, power);
