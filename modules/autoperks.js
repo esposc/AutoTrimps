@@ -570,7 +570,7 @@ var motivation_II = new AutoPerks.ArithmeticPerk("motivation_II", 50000, 1000, 0
 var carpentry_II = new AutoPerks.ArithmeticPerk("carpentry_II", 100000, 10000, 0.0025, carpentry);
 var looting_II = new AutoPerks.ArithmeticPerk("looting_II", 100000, 10000, 0.0025, looting);
 //gather these into an array of objects
-AutoPerks.perkHolder = [siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, looting, toughness, power, motivation, pheromones, artisanistry, carpentry, resilience, coordinated, resourceful, overkill, toughness_II, power_II, motivation_II, carpentry_II, looting_II, capable, cunning, curious];
+AutoPerks.perkHolder = [siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, looting, toughness, power, motivation, pheromones, artisanistry, carpentry, resilience, coordinated, resourceful, overkill, toughness_II, power_II, motivation_II, carpentry_II, looting_II];
 
 AutoPerks.getTierIIPerks = function() {
     var perks = [];
