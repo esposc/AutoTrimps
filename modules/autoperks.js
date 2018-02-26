@@ -125,6 +125,7 @@ ratios1.appendChild(ratioPresetLabel);
 ratios1.appendChild(ratioPreset);
 //
 customRatios.appendChild(ratios2);
+customRatios.appendChild(ratios3);
 document.getElementById("portalWrapper").appendChild(customRatios);
 
 //BEGIN AUTOPERKS SCRIPT CODE:>>>>>>>>>>>>>>
