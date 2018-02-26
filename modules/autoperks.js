@@ -563,6 +563,9 @@ var resilience = new AutoPerks.VariablePerk("resilience", 100, true,       7, 0.
 var coordinated = new AutoPerks.VariablePerk("coordinated", 150000, true,  8, 0.1);
 var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,   9, 0.05);
 var overkill = new AutoPerks.VariablePerk("overkill", 1000000, true,       10, 0.005, 30);
+var capable = new AutoPerks.VariablePerk("capable", 100000000, true,       11, 1, 10);
+var cunning = new AutoPerks.VariablePerk("cunning", 100000000000, true,    12, 0.25);
+var curious = new AutoPerks.VariablePerk("curious", 100000000000000, true, 13, 30);
 //tier2 perks
 var toughness_II = new AutoPerks.ArithmeticPerk("toughness_II", 20000, 500, 0.01, toughness);
 var power_II = new AutoPerks.ArithmeticPerk("power_II", 20000, 500, 0.01, power);
@@ -570,7 +573,7 @@ var motivation_II = new AutoPerks.ArithmeticPerk("motivation_II", 50000, 1000, 0
 var carpentry_II = new AutoPerks.ArithmeticPerk("carpentry_II", 100000, 10000, 0.0025, carpentry);
 var looting_II = new AutoPerks.ArithmeticPerk("looting_II", 100000, 10000, 0.0025, looting);
 //gather these into an array of objects
-AutoPerks.perkHolder = [siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, looting, toughness, power, motivation, pheromones, artisanistry, carpentry, resilience, coordinated, resourceful, overkill, toughness_II, power_II, motivation_II, carpentry_II, looting_II];
+AutoPerks.perkHolder = [siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, looting, toughness, power, motivation, pheromones, artisanistry, carpentry, resilience, coordinated, resourceful, overkill, capable, cunning, curious, toughness_II, power_II, motivation_II, carpentry_II, looting_II];
 
 AutoPerks.getTierIIPerks = function() {
     var perks = [];
