@@ -67,12 +67,6 @@ ratios2.setAttribute('style', 'display: inline-block; text-align: left; width: 1
 var listratios2 = ["Artisanistry","Pheromones","Motivation","Power","Looting"];
 for (var i in listratios2)
     AutoPerks.createInput(listratios2[i],ratios2);
-//Line3
-var ratios3 = document.createElement("DIV");
-ratios3.setAttribute('style', 'display: inline-block; text-align: left; width: 100%');
-var listratios3 = ["Capable","Cunning","Curious"];
-for (var i in listratios3)
-    AutoPerks.createInput(listratios3[i],ratios3);
 //Create dump perk dropdown
 var dumpperklabel = document.createElement("Label");
 dumpperklabel.id = 'DumpPerk Label';
@@ -125,6 +119,12 @@ ratios1.appendChild(ratioPresetLabel);
 ratios1.appendChild(ratioPreset);
 //
 customRatios.appendChild(ratios2);
+//Line3
+var ratios3 = document.createElement("DIV");
+ratios3.setAttribute('style', 'display: inline-block; text-align: left; width: 100%');
+var listratios3 = ["Capable","Cunning","Curious"];
+for (var i in listratios3)
+    AutoPerks.createInput(listratios3[i],ratios3);
 customRatios.appendChild(ratios3);
 document.getElementById("portalWrapper").appendChild(customRatios);
 
