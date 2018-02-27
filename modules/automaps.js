@@ -782,9 +782,6 @@ function autoMap() {
                 }
                 // If we reached the bare minimum, and still can't afford, quit checking 
                 else if (updateMapCost(true) > game.resources.fragments.owned) break;
-                debug("After Cost: " + updateMapCost(true) + " " + (updateMapCost(true) > game.resources.fragments.owned));
-                debug("P: " + needPoisonPres + ", S: " + specModifierValue, " , B: " + biomeAdvMapsSelect.value)
-                debug("L: " + lootAdvMapsRange.value + ", D: " + difficultyAdvMapsRange.value + ", S: " + sizeAdvMapsRange.value);
             }
         //if we can't afford the map we designed, pick our highest existing map
             var maplvlpicked = document.getElementById("mapLevelInput").value + parseInt(document.getElementById("advExtraLevelSelect").value);
