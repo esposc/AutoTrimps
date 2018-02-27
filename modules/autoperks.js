@@ -391,13 +391,13 @@ AutoPerks.applyCalculationsRespec = function(perks){
             //console.log(perks[i].name + " " + perks[i].level);
             buyPortalUpgrade(capitalized);
         }
-        var FixedPerks = AutoPerks.getFixedPerks();
+        /*var FixedPerks = AutoPerks.getFixedPerks();
         for(var i in FixedPerks) {
             var capitalized = AutoPerks.capitaliseFirstLetter(FixedPerks[i].name);
             game.global.buyAmt = FixedPerks[i].level;
             //console.log(FixedPerks[i].name + " " + FixedPerks[i].level);
             buyPortalUpgrade(capitalized);
-        }
+        }*/
         game.global.buyAmt = preBuyAmt;
         //game.global.lastCustomAmt = lastcustom;
         numTab(1,true);     //selects the 1st number of the buy-amount tab-bar (Always 1)
@@ -526,6 +526,7 @@ AutoPerks.ArithmeticPerk = function(name, base, increase, baseIncrease, parent, 
     this.level = level || 0;
     this.spent = 0;
 }
+
 //fixed perks.
 var siphonology = new AutoPerks.FixedPerk("siphonology", 100000, 3, 3);
 var anticipation = new AutoPerks.FixedPerk("anticipation", 1000, 10, 10);
@@ -552,20 +553,20 @@ var preset_genBTC = [100, 8, 8, 4, 4, 5, 18, 8, 14, 1, 1, 1, 0.05, 0.05];
 var preset_genBTC2 = [96, 19, 15.4, 8, 8, 7, 14, 19, 11, 1, 1, 1, 0.05, 0.05];
 var presetList = [preset_ZXV,preset_ZXVnew,preset_ZXV3,preset_TruthEarly,preset_TruthLate,preset_nsheetz,preset_nsheetzNew,preset_HiderHehr,preset_HiderBalance,preset_HiderMore,preset_genBTC,preset_genBTC2];
 //ratio was replaced by position, value will be pulled from ratios above later.
-var looting = new AutoPerks.VariablePerk("looting", 1, false,              0, 0.05);
-var toughness = new AutoPerks.VariablePerk("toughness", 1, false,          1, 0.05);
-var power = new AutoPerks.VariablePerk("power", 1, false,                  2, 0.05);
-var motivation = new AutoPerks.VariablePerk("motivation", 2, false,        3, 0.05);
-var pheromones = new AutoPerks.VariablePerk("pheromones", 3, false,        4, 0.1);
-var artisanistry = new AutoPerks.VariablePerk("artisanistry", 15, true,    5, 0.1);
-var carpentry = new AutoPerks.VariablePerk("carpentry", 25, true,          6, 0.1);
-var resilience = new AutoPerks.VariablePerk("resilience", 100, true,       7, 0.1);
-var coordinated = new AutoPerks.VariablePerk("coordinated", 150000, true,  8, 0.1);
-var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,   9, 0.05);
-var overkill = new AutoPerks.VariablePerk("overkill", 1000000, true,       10, 0.005, 30);
-var capable = new AutoPerks.VariablePerk("capable", 100000000, true,       11, 1, 10);
-var cunning = new AutoPerks.VariablePerk("cunning", 100000000000, true,    12, 0.25);
-var curious = new AutoPerks.VariablePerk("curious", 100000000000000, true, 13, 30);
+var looting = new AutoPerks.VariablePerk("looting", 1, false,               0, 0.05);
+var toughness = new AutoPerks.VariablePerk("toughness", 1, false,           1, 0.05);
+var power = new AutoPerks.VariablePerk("power", 1, false,                   2, 0.05);
+var motivation = new AutoPerks.VariablePerk("motivation", 2, false,         3, 0.05);
+var pheromones = new AutoPerks.VariablePerk("pheromones", 3, false,         4, 0.1);
+var artisanistry = new AutoPerks.VariablePerk("artisanistry", 15, true,     5, 0.1);
+var carpentry = new AutoPerks.VariablePerk("carpentry", 25, true,           6, 0.1);
+var resilience = new AutoPerks.VariablePerk("resilience", 100, true,        7, 0.1);
+var coordinated = new AutoPerks.VariablePerk("coordinated", 150000, true,   8, 0.1);
+var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,    9, 0.05);
+var overkill = new AutoPerks.VariablePerk("overkill", 1000000, true,        10, 0.005, 30);
+var capable = new AutoPerks.VariablePerk("capable", 100000000, false,       11, 1, 10);
+var cunning = new AutoPerks.VariablePerk("cunning", 100000000000, false,    12, 0.25);
+var curious = new AutoPerks.VariablePerk("curious", 100000000000000, false, 13, 30);
 //tier2 perks
 var toughness_II = new AutoPerks.ArithmeticPerk("toughness_II", 20000, 500, 0.01, toughness);
 var power_II = new AutoPerks.ArithmeticPerk("power_II", 20000, 500, 0.01, power);
