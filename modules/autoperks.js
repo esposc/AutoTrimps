@@ -276,6 +276,7 @@ AutoPerks.getHelium = function() {
 
 AutoPerks.calculatePrice = function(perk, level) { // Calculate price of buying *next* level
     if(perk.type == 'exponential') return Math.ceil(level/2 + perk.base * Math.pow(1.3, level));
+    else if(perk.type == 'multiplicative') return Math.ceil(level/2 + perk.base * Math.pow(perk.mult, level));
     else if(perk.type == 'linear') return Math.ceil(perk.base + perk.increase * level);
 }
 
@@ -508,6 +509,32 @@ AutoPerks.VariablePerk = function(name, base, compounding, value, baseIncrease, 
     this.value = getRatiosFromPresets();    
 }
 
+AutoPerks.MultiplyPerk = function(name, base, mult, value, baseIncrease, max, level) {
+    this.id = -1;
+    this.name = name;
+    this.base = base;
+    this.type  = "multiplicative";
+    this.fixed = false;
+    this.mult = mult;
+    //this.value = value; // sets ratios (now done below)
+    this.updatedValue = -1; // If a custom ratio is supplied, this will be modified to hold the new value.
+    this.baseIncrease = baseIncrease; // The raw stat increase that the perk gives.
+    this.efficiency = -1; // Efficiency is defined as % increase * value / He cost
+    this.max = max || Number.MAX_VALUE;
+    this.level = level || 0; // How many levels have been invested into a perk
+    this.spent = 0; // Total helium spent on each perk.
+    function getRatiosFromPresets() { 
+        //var perkOrder = [looting,toughness,power,motivation,pheromones,artisanistry,carpentry,resilience,coordinated,resourceful,overkill];
+        var valueArray = [];
+        for (var i=0; i<presetList.length; i++) {
+            valueArray.push(presetList[i][value]);
+        }
+        return valueArray;
+        //return [preset_ZXV[value],preset_ZXVnew[value],preset_ZXV3[value],preset_TruthEarly[value],preset_TruthLate[value],preset_nsheetz[value],preset_nsheetzNew[value],preset_HiderHehr[value],preset_HiderBalance[value],preset_HiderMore[value]];
+    }
+    this.value = getRatiosFromPresets(); 
+}
+
 AutoPerks.ArithmeticPerk = function(name, base, increase, baseIncrease, parent, max, level) { // Calculate a way to obtain parent automatically.
     this.id = -1;
     this.name = name;
@@ -564,7 +591,7 @@ var resilience = new AutoPerks.VariablePerk("resilience", 100, true,        7, 0
 var coordinated = new AutoPerks.VariablePerk("coordinated", 150000, true,   8, 0.1);
 var resourceful = new AutoPerks.VariablePerk("resourceful", 50000, true,    9, 0.05);
 var overkill = new AutoPerks.VariablePerk("overkill", 1000000, true,        10, 0.005, 30);
-var capable = new AutoPerks.VariablePerk("capable", 100000000, false,       11, 1, 10);
+var capable = new AutoPerks.MultiplyPerk("capable", 100000000, 10,          11, 1, 10);
 var cunning = new AutoPerks.VariablePerk("cunning", 100000000000, false,    12, 0.25);
 var curious = new AutoPerks.VariablePerk("curious", 100000000000000, false, 13, 30);
 //tier2 perks
