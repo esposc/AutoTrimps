@@ -876,6 +876,7 @@ function updateAutoMapsStatus() {
     if(!autoTrimpSettings.AutoMaps.enabled) status.innerHTML = 'Off';
     else if (preSpireFarming) status.innerHTML = 'Spire farming for ' + (spireTime >= 60 ? (spireTime / 60).toFixed(2) + 'h' : spireTime.toFixed(2) + 'm');
     else if (!game.global.mapsUnlocked) status.innerHTML = '&nbsp;';
+    else if (needPrestige && getCurrentMapObject().level > game.global.world) status.innerHTML = 'Poison Prestige';
     else if (needPrestige && !doVoids) status.innerHTML = 'Prestige';
     else if (doVoids && voidCheckPercent == 0) status.innerHTML = 'Void Maps: ' + game.global.totalVoidMaps + ' remaining';
     else if (stackingTox) status.innerHTML = 'Getting Tox Stacks';
