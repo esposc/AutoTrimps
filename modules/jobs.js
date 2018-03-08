@@ -107,6 +107,13 @@ function buyJobs() {
     } else if (getPageSetting('HireScientists') && game.jobs.Scientist.owned < 10 && scienceNeeded > 100 && freeWorkers > 0 && game.jobs.Farmer.owned >= 10) {
         safeBuyJob('Scientist', 1);
     }
+
+    //Prioritze Explorers over Watch and BreedTimer
+    if (getPageSetting('MaxExplorers') > game.jobs.Explorer.owned || getPageSetting('MaxExplorers') == -1) {
+	var amount = (getPageSetting('MaxExplorers') == -1 || game.jobs.Explorer.owned + amount < getPageSetting('MaxExplorers')) ? calculateMaxAfford(game.jobs.Explorer, false, false, true) : getPageSetting('MaxExplorers') - game.jobs.Explorer.owned;
+        checkFireandHire('Explorer', amount);
+    }
+
     freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
     totalDistributableWorkers = freeWorkers + game.jobs.Farmer.owned + game.jobs.Miner.owned + game.jobs.Lumberjack.owned;
     if (game.global.challengeActive == 'Watch'){
@@ -176,11 +183,6 @@ function buyJobs() {
         // regular
         else
             checkFireandHire('Trainer');
-    }
-    //Explorers:
-    if (getPageSetting('MaxExplorers') > game.jobs.Explorer.owned || getPageSetting('MaxExplorers') == -1) {
-	var amount = (getPageSetting('MaxExplorers') == -1 || game.jobs.Explorer.owned + amount < getPageSetting('MaxExplorers')) ? calculateMaxAfford(game.jobs.Explorer, false, false, true) : getPageSetting('MaxExplorers') - game.jobs.Explorer.owned;
-        checkFireandHire('Explorer', amount);
     }
 
     //Buy Farmers:
