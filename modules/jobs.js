@@ -179,6 +179,7 @@ function buyJobs() {
     }
     //Explorers:
     if (getPageSetting('MaxExplorers') > game.jobs.Explorer.owned || getPageSetting('MaxExplorers') == -1) {
+	var amount = (getPageSetting('MaxExplorers') == -1 || game.jobs.Explorer.owned + amount < getPageSetting('MaxExplorers')) ? calculateMaxAfford(game.jobs.Explorer, false, false, true) : getPageSetting('MaxExplorers') - game.jobs.Explorer.owned;
         checkFireandHire('Explorer');
     }
 
