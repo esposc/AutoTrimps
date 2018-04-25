@@ -106,6 +106,8 @@ html += "<option id='preset_HiderBalance'>Hider (Balance)</option>"
 html += "<option id='preset_HiderMore'>Hider* (More Zones)</option>"
 html += "<option id='preset_genBTC'>genBTC</option>"
 html += "<option id='preset_genBTC2'>genBTC2</option>"
+html += "<option id='preset_espoHeHr'>espoHeHr</option>"
+html += "<option id='preset_espoLong'>espoLong</option>"
 html += "<option id='customPreset'>Custom</option></select>"
 ratioPreset.innerHTML = html;
 //load the last ratio used
@@ -578,8 +580,8 @@ var preset_HiderBalance = [75, 4, 8, 4, 1, 4, 24, 1, 75, 0.5, 3, 100, 100, 100];
 var preset_HiderMore = [20, 4, 10, 12, 1, 8, 8, 1, 40, 0.1, 0.5, 1, 0.05, 0.05];
 var preset_genBTC = [100, 8, 8, 4, 4, 5, 18, 8, 14, 1, 1, 100, 100, 100];
 var preset_genBTC2 = [96, 19, 15.4, 8, 8, 7, 14, 19, 11, 1, 1, 100, 100, 100];
-var preset_espoHeHr = [50, 50, 1, 10, 8, 2, 10, 1, 0.9, 1, 1000, 10000, 10000];
-var preset_espoLong = [5, 50, 1, 10, 10, 1, 20, .5, 1, 1, 100, 0.00001, 0.01];
+var preset_espoHeHr = [50, 10, 50, 1, 10, 8, 2, 10, 1, 0.9, 1, 1000, 5000, 5000];
+var preset_espoLong = [1, 50, 50, 1, 10, 8, 1, 50, 0.5, 0.9, 1, 1000, 0.00005, 0.00005];
 var presetList = [preset_ZXV,preset_ZXVnew,preset_ZXV3,preset_TruthEarly,preset_TruthLate,preset_nsheetz,preset_nsheetzNew,preset_HiderHehr,preset_HiderBalance,preset_HiderMore,preset_genBTC,preset_genBTC2,preset_espoHeHr,preset_espoLong];
 //ratio was replaced by position, value will be pulled from ratios above later.
 var looting = new AutoPerks.VariablePerk("looting", 1, false,               0, 0.05);
