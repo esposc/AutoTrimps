@@ -192,6 +192,20 @@ function postBuy2(old) {
     game.global.maxSplit = old[3];
 }
 
+function newSquadRdy() {
+    var targetBreed = getPageSetting('GeneticistTimer');
+    var now = new Date().getTime();
+    if (targetBreed > 0) {
+        if (game.jobs.Amalgamator.owned > 0) {
+            return ((now - game.global.lastSoldierSentAt)/1000 >= targetBreed)
+	} else {
+	    return (game.global.lastBreedTime/1000 >= targetBreed)
+	}
+    } else {
+        return (game.resources.trimps.realMax() <= game.resources.trimps.owned + 1)
+    }
+}
+
 function setTitle() {
     if (aWholeNewWorld)
         document.title = '(' + game.global.world + ')' + ' Trimps ' + document.getElementById('versionNumber').innerHTML;

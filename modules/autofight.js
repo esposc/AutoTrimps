@@ -11,11 +11,11 @@ function betterAutoFight() {
     if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done) return;  //sanity check. stops error message on z1 right after portal
     var targetBreed = getPageSetting('GeneticistTimer');
     var breeding = (game.resources.trimps.owned - game.resources.trimps.employed);
-    var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
+    var newSquad = newSquadRdy();
     var lowLevelFight = game.resources.trimps.maxSoldiers < breeding * 0.5 && breeding > game.resources.trimps.realMax() * 0.1 && game.global.world < 5;
     //Manually fight instead of using builtin auto-fight
     if (!game.global.fighting) {
-        if (newSquadRdy || game.global.soldierHealth > 0 || lowLevelFight || game.global.challengeActive == 'Watch') {
+        if (newSquad || game.global.soldierHealth > 0 || lowLevelFight || game.global.challengeActive == 'Watch') {
             fightManual();
         }
         //Click Fight if we are dead and already have enough for our breed timer, and fighting would not add a significant amount of time
@@ -36,7 +36,7 @@ function betterAutoFight2() {
         return;         //sanity check.
     var targetBreed = getPageSetting('GeneticistTimer');
     var breeding = (game.resources.trimps.owned - game.resources.trimps.employed);
-    var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
+    var newSquad = newSquadRdy();
     var adjustedMax = (game.portal.Coordinated.level) ? game.portal.Coordinated.currentSend : trimps.maxSoldiers;
     var potencyMod = getPotencyMod();
     var tps = breeding * potencyMod;
@@ -47,7 +47,7 @@ function betterAutoFight2() {
     if (!game.global.fighting) {
         if (game.global.soldierHealth > 0)
             battle(true); //just fight, dont speak.
-        else if (newSquadRdy || lowLevelFight || game.global.challengeActive == 'Watch') {
+        else if (newSquad || lowLevelFight || game.global.challengeActive == 'Watch') {
             battle(true);
             debug("AutoFight Default: New squad ready", "other");
         }

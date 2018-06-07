@@ -33,11 +33,11 @@ function autoBreedTimer() {
     var inScryerStance = (game.global.world >= 60 && game.global.highestLevelCleared >= 180) && game.global.formation == 4;
     //(inDamageStance||inScryerStance);
     var targetBreed = getPageSetting('GeneticistTimer');
-    var newSquadRdy = game.global.lastBreedTime/1000 >= targetBreed; 
+    var newSquad = newSquadRdy();
     //if we need to hire geneticists
     //Don't hire geneticists if total breed time remaining is greater than our target breed time
     //Don't hire geneticists if we have already reached max anti stacks (put off further delay to next trimp group) //&& (game.global.lastBreedTime/1000 + getBreedTime(true) < targetBreed) 
-    if ((newSquadRdy || (game.global.lastBreedTime/1000 + getBreedTime(true) < targetBreed)) && targetBreed > getBreedTime() && !game.jobs.Geneticist.locked && targetBreed > getBreedTime(true) && game.resources.trimps.soldiers > 0 && !breedFire) {
+    if ((newSquad || (game.global.lastBreedTime/1000 + getBreedTime(true) < targetBreed)) && targetBreed > getBreedTime() && !game.jobs.Geneticist.locked && targetBreed > getBreedTime(true) && game.resources.trimps.soldiers > 0 && !breedFire) {
         var time = getBreedTime();
         var timeOK = time > 0 ? time : 0.1;
         var numgens = Math.trunc(Math.log(targetBreed / timeOK ) / Math.log(1.02));
@@ -86,7 +86,7 @@ function autoBreedTimer() {
 
     //Force Abandon Code (AutoTrimpicide):
     targetBreed = parseInt(getPageSetting('GeneticistTimer'));
-    newSquadRdy = game.global.lastBreedTime/1000 >= targetBreed;
+    newSquad = newSquadRdy();
     var nextgrouptime = (game.global.lastBreedTime/1000);
     if  (targetBreed > maxBreedtime) targetBreed = maxBreedtime; //play nice with custom timers over 30.
     var newstacks = nextgrouptime >= targetBreed ? targetBreed : nextgrouptime;
@@ -94,11 +94,11 @@ function autoBreedTimer() {
     var killTitimp = (game.global.titimpLeft < customVars.killTitimpStacks || (game.global.titimpLeft >= customVars.killTitimpStacks && newstacks - game.global.antiStacks >= customVars.killTitimpStacks))
     if (game.portal.Anticipation.level && game.global.antiStacks < targetBreed && game.resources.trimps.soldiers > 0 && killTitimp) {
         //if a new fight group is available and anticipation stacks aren't maxed, force abandon and grab a new group
-        if (newSquadRdy && nextgrouptime >= targetBreed) {
+        if (newSquad && nextgrouptime >= targetBreed) {
             forceAbandonTrimps();
         }
         //if we're sitting around breeding forever and over (5) anti stacks away from target.
-        else if (newSquadRdy && nextgrouptime >= (maxBreedtime + 1) && newstacks - game.global.antiStacks >= customVars.killTitimpStacks) {
+        else if (newSquad && nextgrouptime >= (maxBreedtime + 1) && newstacks - game.global.antiStacks >= customVars.killTitimpStacks) {
             forceAbandonTrimps();
         }
     }

@@ -21,7 +21,7 @@ function useScryerStance() {
     else if (AutoStance==2)
         calcBaseDamageinX2(); //calculate method #2
     var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
-    var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
+    var newSquad = newSquadRdy();
     var form = game.global.formation;
     var oktoswitch = true;
     var die = getPageSetting('ScryerDieToUseS');
@@ -32,7 +32,7 @@ function useScryerStance() {
         die = game.global.world >= dieZ && (!dieC || (game.global.lastClearedCell + 1 >= dieC));
     }
     if (form == 0 || form == 1)
-        oktoswitch = die || newSquadRdy || (missingHealth < (baseHealth / 2));
+        oktoswitch = die || newSquad || (missingHealth < (baseHealth / 2));
 
     var useoverkill = getPageSetting('ScryerUseWhenOverkill');
     if (useoverkill && game.portal.Overkill.level == 0)

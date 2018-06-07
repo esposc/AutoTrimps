@@ -65,7 +65,7 @@ function autoStance() {
 
     //start analyzing autostance
     var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
-    var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
+    var newSquad = newSquadRdy();
     var dHealth = baseHealth/2;
     var xHealth = baseHealth;
     var bHealth = baseHealth/2;
@@ -191,28 +191,28 @@ function autoStance() {
     //double attack is OK if the buff isn't double attack, or we will survive a double attack. see main.js @ 7197-7217 https://puu.sh/ssVNP/95f699a879.png (cant prevent the 2nd hit)
     var isDoubleAttack = game.global.voidBuff == 'doubleAttack' || (enemy && enemy.corrupted == 'corruptDbl');
     // quality bugfix by uni @ 2.1.5.4u5
-    var doubleAttackOK = true; // !isDoubleAttack || ((newSquadRdy && dHealth > dDamage * 2) || dHealth - missingHealth > dDamage * 2);
+    var doubleAttackOK = true; // !isDoubleAttack || ((newSquad && dHealth > dDamage * 2) || dHealth - missingHealth > dDamage * 2);
     //lead attack ok if challenge isn't lead, or we are going to one shot them, or we can survive the lead damage
     var leadDamage = game.challenges.Lead.stacks * 0.0003;
-    var leadAttackOK = game.global.challengeActive != 'Lead' || enemyHealth <= baseDamage || ((newSquadRdy && dHealth > dDamage + (dHealth * leadDamage)) || (dHealth - missingHealth > dDamage + (dHealth * leadDamage)));
+    var leadAttackOK = game.global.challengeActive != 'Lead' || enemyHealth <= baseDamage || ((newSquad && dHealth > dDamage + (dHealth * leadDamage)) || (dHealth - missingHealth > dDamage + (dHealth * leadDamage)));
     //added voidcrit.
     //voidcrit is OK if the buff isn't crit-buff, or we will survive a crit, or we are going to one-shot them (so they won't be able to crit)
     const ignoreCrits = getPageSetting('IgnoreCrits'); // or if ignored
     var isCritVoidMap = ignoreCrits == 2 ? false : (!ignoreCrits && game.global.voidBuff == 'getCrit') || (enemy && enemy.corrupted == 'corruptCrit');
-    var voidCritinDok = !isCritVoidMap || (!enemyFast ? enemyHealth <= baseDamage : false) || (newSquadRdy && dHealth > dVoidCritDamage) || (dHealth - missingHealth > dVoidCritDamage);
-    var voidCritinXok = !isCritVoidMap || (!enemyFast ? enemyHealth <= baseDamage : false) || (newSquadRdy && xHealth > xVoidCritDamage) || (xHealth - missingHealth > xVoidCritDamage);
+    var voidCritinDok = !isCritVoidMap || (!enemyFast ? enemyHealth <= baseDamage : false) || (newSquad && dHealth > dVoidCritDamage) || (dHealth - missingHealth > dVoidCritDamage);
+    var voidCritinXok = !isCritVoidMap || (!enemyFast ? enemyHealth <= baseDamage : false) || (newSquad && xHealth > xVoidCritDamage) || (xHealth - missingHealth > xVoidCritDamage);
 
     if (!game.global.preMapsActive && game.global.soldierHealth > 0) {
-        if (!enemyFast && game.upgrades.Dominance.done && enemyHealth <= baseDamage && (newSquadRdy || (dHealth - missingHealth > 0 && !drainChallenge) || (drainChallenge && drainChallengeOK))) {
+        if (!enemyFast && game.upgrades.Dominance.done && enemyHealth <= baseDamage && (newSquad || (dHealth - missingHealth > 0 && !drainChallenge) || (drainChallenge && drainChallengeOK))) {
             setFormation(2);
             //use D stance if: new army is ready&waiting / can survive void-double-attack or we can one-shot / can survive lead damage / can survive void-crit-dmg
-        } else if (game.upgrades.Dominance.done && ((newSquadRdy && dHealth > dDamage) || dHealth - missingHealth > dDamage) && doubleAttackOK && leadAttackOK && voidCritinDok ) {
+        } else if (game.upgrades.Dominance.done && ((newSquad && dHealth > dDamage) || dHealth - missingHealth > dDamage) && doubleAttackOK && leadAttackOK && voidCritinDok ) {
             setFormation(2);
             //if CritVoidMap, switch out of D stance if we cant survive. Do various things.
         } else if (isCritVoidMap && !voidCritinDok) {
             //if we are already in X and the NEXT potential crit would take us past the point of being able to return to D/B, switch to B.
             if (game.global.formation == "0" && game.global.soldierHealth - xVoidCritDamage < game.global.soldierHealthMax/2){
-                if (game.upgrades.Barrier.done && (newSquadRdy || (missingHealth < game.global.soldierHealthMax/2)) )
+                if (game.upgrades.Barrier.done && (newSquad || (missingHealth < game.global.soldierHealthMax/2)) )
                     setFormation(3);
             }
                 //else if we can totally block all crit damage in X mode, OR we can't survive-crit in D, but we can in X, switch to X.
@@ -223,7 +223,7 @@ function autoStance() {
                 //otherwise, stuff:
             else {
                 if (game.global.formation == "0"){
-                    if (game.upgrades.Barrier.done && (newSquadRdy || (missingHealth < game.global.soldierHealthMax/2)) )
+                    if (game.upgrades.Barrier.done && (newSquad || (missingHealth < game.global.soldierHealthMax/2)) )
                         setFormation(3);
                     else
                         setFormation(1);
@@ -231,13 +231,13 @@ function autoStance() {
                 else if (game.upgrades.Barrier.done && (game.global.formation == 2 || game.global.formation == 4))
                     setFormation(3);
             }
-        } else if (game.upgrades.Formations.done && ((newSquadRdy && xHealth > xDamage) || xHealth - missingHealth > xDamage)) {
+        } else if (game.upgrades.Formations.done && ((newSquad && xHealth > xDamage) || xHealth - missingHealth > xDamage)) {
             //in lead challenge, switch to H if about to die, so doesn't just die in X mode without trying
             if ((game.global.challengeActive == 'Lead') && (xHealth - missingHealth < xDamage + (xHealth * leadDamage)))
                 setFormation(1);
             else
                 setFormation("0");
-        } else if (game.upgrades.Barrier.done && ((newSquadRdy && bHealth > bDamage) || bHealth - missingHealth > bDamage)) {
+        } else if (game.upgrades.Barrier.done && ((newSquad && bHealth > bDamage) || bHealth - missingHealth > bDamage)) {
             setFormation(3);    //does this ever run?
         } else if (game.upgrades.Formations.done) {
             setFormation(1);
@@ -259,7 +259,7 @@ function autoStance2() {
     var targetBreed = parseInt(getPageSetting('GeneticistTimer'));
     //start analyzing autostance
     var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
-    var newSquadRdy = game.global.lastBreedTime/1000 >= targetBreed;
+    var newSquad = newSquadRdy();
     var dHealth = baseHealth/2;
     var dmissingHealth = dHealth - game.global.soldierHealth;
     var xHealth = baseHealth;
@@ -364,9 +364,9 @@ function autoStance2() {
 
     //lead attack ok if challenge isn't lead, or we are going to one shot them, or we can survive the lead damage
     var oneshotFast = enemyFast ? enemyHealth <= baseDamage : false;
-    var surviveD = ((newSquadRdy && dHealth > dDamage) || (dHealth - dmissingHealth > dDamage));
-    var surviveX = ((newSquadRdy && xHealth > xDamage) || (xHealth - xmissingHealth > xDamage));
-    var surviveB = ((newSquadRdy && bHealth > bDamage) || (bHealth - bmissingHealth > bDamage));
+    var surviveD = ((newSquad && dHealth > dDamage) || (dHealth - dmissingHealth > dDamage));
+    var surviveX = ((newSquad && xHealth > xDamage) || (xHealth - xmissingHealth > xDamage));
+    var surviveB = ((newSquad && bHealth > bDamage) || (bHealth - bmissingHealth > bDamage));
     var leadAttackOK = !leadChallenge || oneshotFast || surviveD;
     var drainAttackOK = !drainChallenge || oneshotFast || surviveD;
     var isCritThing = isCritVoidMap || isCritDaily || isCrushed;
@@ -375,14 +375,14 @@ function autoStance2() {
 
     if (!game.global.preMapsActive && game.global.soldierHealth > 0) {
         //use D stance if: new army is ready&waiting / can survive void-double-attack or we can one-shot / can survive lead damage / can survive void-crit-dmg
-        if (game.upgrades.Dominance.done && surviveD && leadAttackOK && drainAttackOK && voidCritinDok) {
+        if (newSquad || (game.upgrades.Dominance.done && surviveD && leadAttackOK && drainAttackOK && voidCritinDok)) {
             setFormation(2);
         //if CritVoidMap, switch out of D stance if we cant survive. Do various things.
         }
         else if (isCritThing && !voidCritinDok) {
             //if we are already in X and the NEXT potential crit would take us past the point of being able to return to D/B, switch to B.
             if (game.global.formation == "0" && game.global.soldierHealth - xDamage < bHealth){
-                if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth))
+                if (game.upgrades.Barrier.done && (newSquad || missingHealth < bHealth))
                     setFormation(3);
             }
             //else if we can totally block all crit damage in X mode, OR we can't survive-crit in D, but we can in X, switch to X.
@@ -393,7 +393,7 @@ function autoStance2() {
             //otherwise, stuff: (Try for B again)
             else {
                 if (game.global.formation == "0"){
-                    if (game.upgrades.Barrier.done && (newSquadRdy || missingHealth < bHealth)) {
+                    if (game.upgrades.Barrier.done && (newSquad || missingHealth < bHealth)) {
                         setFormation(3);
                     }
                     else {
@@ -442,7 +442,7 @@ function autoStanceCheck(enemyCrit) {
     
     //start analyzing autostance
     var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
-    var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
+    var newSquad = newSquadRdy();
 
     //COMMON:
     var corrupt = game.global.world >= mutations.Corruption.start();
@@ -515,7 +515,7 @@ function autoStanceCheck(enemyCrit) {
 
     //lead attack ok if challenge isn't lead, or we are going to one shot them, or we can survive the lead damage
     var oneshotFast = enemyFast ? enemyHealth <= ourDamage : false;
-    var survive = ((newSquadRdy && ourHealth > enemyDamage) || (ourHealth - missingHealth > enemyDamage));
+    var survive = ((newSquad && ourHealth > enemyDamage) || (ourHealth - missingHealth > enemyDamage));
     var leadAttackOK = !leadChallenge || oneshotFast || survive;
     var drainAttackOK = !drainChallenge || oneshotFast || survive;
     var isCritThing = isCritVoidMap || isCritDaily || isCrushed;    

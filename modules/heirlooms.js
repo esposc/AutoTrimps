@@ -312,6 +312,20 @@ function evaluateHeirloomMods(loom, location, upgrade) {
                     }
                 }
                 break;
+            case 'plaguebringer':
+                tempEff = loom.mods[m][1]/100;
+                eff += tempEff;
+                if(upgrade){
+                    steps = game.heirlooms.Shield.plaguebringer.steps[loom.rarity];
+                    tempEff = ((steps[2]/100)/((game.heirlooms.Shield.plaguebringer.currentBonus/100) + 1);
+                    tempEff = tempEff / getModUpgradeCost(loom, m);
+                    if(tempEff > bestUpgrade.effect) {
+                        bestUpgrade.effect = tempEff;
+                        bestUpgrade.name = 'plaguebringer';
+                        bestUpgrade.index = m;
+                    }
+                }
+                break;
             case 'voidMaps':
                 tempEff = loom.mods[m][1]/100;
                 eff += tempEff;
@@ -350,6 +364,48 @@ function evaluateHeirloomMods(loom, location, upgrade) {
                     if(tempEff > bestUpgrade.effect) {
                         bestUpgrade.effect = tempEff;
                         bestUpgrade.name = 'metalDrop';
+                        bestUpgrade.index = m;
+                    }
+                }
+                break;
+            case 'ExplorerSpeed':
+                tempEff = 0.75*loom.mods[m][1]/100;
+                eff += tempEff;
+                if(upgrade) {
+                    steps = game.heirlooms.defaultSteps[loom.rarity];
+                    tempEff = (0.75*steps[2]/100)/((game.heirlooms.Staff.ExplorerSpeed.currentBonus/100) + 1);
+                    tempEff = tempEff / getModUpgradeCost(loom, m);
+                    if(tempEff > bestUpgrade.effect) {
+                        bestUpgrade.effect = tempEff;
+                        bestUpgrade.name = 'ExplorerSpeed';
+                        bestUpgrade.index = m;
+                    }
+                }
+                break;
+            case 'fragmentsDrop':
+                tempEff = 0.75*loom.mods[m][1]/100;
+                eff += tempEff;
+                if(upgrade) {
+                    steps = game.heirlooms.defaultSteps[loom.rarity];
+                    tempEff = (0.75*steps[2]/100)/((game.heirlooms.Staff.fragmentsDrop.currentBonus/100) + 1);
+                    tempEff = tempEff / getModUpgradeCost(loom, m);
+                    if(tempEff > bestUpgrade.effect) {
+                        bestUpgrade.effect = tempEff;
+                        bestUpgrade.name = 'fragmentsDrop';
+                        bestUpgrade.index = m;
+                    }
+                }
+                break;
+            case 'FluffyExp':
+                tempEff = 0.75*loom.mods[m][1]/100;
+                eff += tempEff;
+                if(upgrade) {
+                    steps = game.heirlooms.defaultSteps[loom.rarity];
+                    tempEff = (0.75*steps[2]/100)/((game.heirlooms.Staff.FluffyExp.currentBonus/100) + 1);
+                    tempEff = tempEff / getModUpgradeCost(loom, m);
+                    if(tempEff > bestUpgrade.effect) {
+                        bestUpgrade.effect = tempEff;
+                        bestUpgrade.name = 'FluffyExp';
                         bestUpgrade.index = m;
                     }
                 }
