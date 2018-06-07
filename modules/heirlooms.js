@@ -317,7 +317,7 @@ function evaluateHeirloomMods(loom, location, upgrade) {
                 eff += tempEff;
                 if(upgrade){
                     steps = game.heirlooms.Shield.plaguebringer.steps[loom.rarity];
-                    tempEff = ((steps[2]/100)/((game.heirlooms.Shield.plaguebringer.currentBonus/100) + 1);
+                    tempEff = (steps[2]/100)/((game.heirlooms.Shield.plaguebringer.currentBonus/100) + 1);
                     tempEff = tempEff / getModUpgradeCost(loom, m);
                     if(tempEff > bestUpgrade.effect) {
                         bestUpgrade.effect = tempEff;
