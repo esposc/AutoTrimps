@@ -681,10 +681,11 @@ function autoMap() {
             if (game.global.world > 109) {
                 perfectCheck.checked = true;
             }
-            // Use client specific special modifier, prestigious not included
+            // Use client specific special modifier
         if (autoTrimpSettings.SpecModifier.selected != 'Off') {
             if (autoTrimpSettings.SpecModifier.selected == 'Fast Attacks' && game.global.world > 59) document.getElementById('advSpecialSelect').value = 'fa'
-            else if (autoTrimpSettings.SpecModifier.selected == 'Large Cache' && game.global.world > 59) specModier.value = 'lc'
+            else if (autoTrimpSettings.SpecModifier.selected == 'Prestigious' && game.global.world > 59) document.getElementById('advSpecialSelect').value = 'p'
+            else if (autoTrimpSettings.SpecModifier.selected == 'Large Cache' && game.global.world > 59) document.getElementById('advSpecialSelect').value = 'lc'
             else if (autoTrimpSettings.SpecModifier.selected == 'Small Savoury Cache' && game.global.world > 84) document.getElementById('advSpecialSelect').value = 'ssc'
             else if (autoTrimpSettings.SpecModifier.selected == 'Small Wooden Cache' && game.global.world > 84) document.getElementById('advSpecialSelect').value = 'swc'
             else if (autoTrimpSettings.SpecModifier.selected == 'Small Metal Cache' && game.global.world > 84) document.getElementById('advSpecialSelect').value = 'smc'
