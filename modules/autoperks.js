@@ -237,6 +237,7 @@ AutoPerks.initialise = function() {
 
 //Main function (green "Allocate Perks" button):
 AutoPerks.clickAllocate = function() {
+    if (getPageSetting('AutoAllocatePerks') == 2) document.getElementById('clearPerksBtn').click();
     AutoPerks.initialise(); // Reset all fixed perks to 0 and grab new ratios if any
 
     var preSpentHe = 0;
@@ -412,7 +413,7 @@ AutoPerks.spendHelium2 = function(helium, perks) {
         //document.getElementById("nextCoordinated").innerHTML = "Not enough helium to buy fixed perks.";
         return;
     }
-
+u
     var perks = AutoPerks.getVariablePerks();
 
     var effQueue = new FastPriorityQueue(function(a,b) { return a.efficiency > b.efficiency } ) // Queue that keeps most efficient purchase at the top
@@ -445,7 +446,7 @@ AutoPerks.spendHelium2 = function(helium, perks) {
     while(helium > price) {
         // Purchase the most efficient perk
         if (capitalized.indexOf("_II") > 0) {
-            mostEff.level += AutoPerks.getPerkBuyCount(capitalized, helium)
+            mostEff.level += game.global.buyAmt
         } else {
             mostEff.level++
         }
