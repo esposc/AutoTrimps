@@ -262,6 +262,29 @@ AutoPerks.clickAllocate = function() {
     AutoPerks.applyCalculations(perks);
 }
 
+AutoPerks.clickAllocate2 = function() {
+    AutoPerks.initialise(); // Reset all fixed perks to 0 and grab new ratios if any
+
+    var preSpentHe = 0;
+
+    var helium = AutoPerks.getHelium();
+
+    // Get fixed perks
+    var fixedPerks = AutoPerks.getFixedPerks();
+    for (var i = 0; i < fixedPerks.length; i++) {
+        fixedPerks[i].level = game.portal[AutoPerks.capitaliseFirstLetter(fixedPerks[i].name)].level;
+        var price = AutoPerks.calculateTotalPrice(fixedPerks[i], fixedPerks[i].level);
+        preSpentHe += price;
+    }
+
+    var remainingHelium = helium - preSpentHe;
+    // Get owned perks
+    var perks = AutoPerks.getOwnedPerks();
+
+    // determine how to spend helium
+    AutoPerks.spendHelium2(remainingHelium, perks);
+}
+
 //NEW way: Get accurate count of helium (calcs it like the game does)
 AutoPerks.getHelium = function() {
     //determines if we are in the portal screen or the perk screen.
@@ -300,6 +323,25 @@ AutoPerks.calculateIncrease = function(perk, level) {
     if(perk.compounding) increase = perk.baseIncrease;
     else increase = (1 + (level + 1) * perk.baseIncrease) / ( 1 + level * perk.baseIncrease) - 1;
     return increase / perk.baseIncrease * value;
+}
+
+AutoPerks.getPerkBuyCount = function(perkName, forceAmt) {
+    var perk = game.portal[perkName];
+    var heliumAvailable
+    if (forceAmt) heliumAvailable = forceAmt
+    else game.global.buyAmt;
+    var toBuy = 0;
+    var levels = perk.level + perk.levelTemp;
+    var increase = perk.additiveInc
+    var nextPurchaseCost = perk.priceBase + (levels * increase);
+    var A = (increase / 2);
+    var B = (nextPurchaseCost - A);
+    var C = heliumAvailable * -1;
+    var affordableLevels = ((B * -1) + Math.sqrt(Math.pow(B, 2) - (4 * A * C))) / (2 * A);
+    toBuy = Math.floor(affordableLevels);
+    if (toBuy <= 0) toBuy = 1;
+    if (perk.max && ((perk.level + perk.levelTemp + toBuy) > perk.max)) toBuy = perk.max - perk.level - perk.levelTemp;
+    return toBuy;
 }
 
 AutoPerks.spendHelium = function(helium, perks) {
@@ -375,6 +417,120 @@ AutoPerks.spendHelium = function(helium, perks) {
         // Add back into queue run again until out of helium
         if(mostEff.level < mostEff.max) // but first, check if the perk has reached its maximum value
             effQueue.add(mostEff);
+    }
+}
+
+AutoPerks.spendHelium2 = function(helium, perks) {
+    var preBuyAmt = game.global.buyAmt;
+
+    if(helium < 0) {
+        debug("AutoPerks: Not enough helium to buy fixed perks.","general");
+        //document.getElementById("nextCoordinated").innerHTML = "Not enough helium to buy fixed perks.";
+        return;
+    }
+
+    var perks = AutoPerks.getVariablePerks();
+
+    var effQueue = new FastPriorityQueue(function(a,b) { return a.efficiency > b.efficiency } ) // Queue that keeps most efficient purchase at the top
+    // Calculate base efficiency of all perks
+    for(var i in perks) {
+        var price = AutoPerks.calculatePrice(perks[i], 0);
+        var inc = AutoPerks.calculateIncrease(perks[i], 0);
+        perks[i].efficiency = inc/price;
+        if(perks[i].efficiency <= 0) {
+            debug("Perk ratios must be positive values.","general");
+            return;
+        }
+        effQueue.add(perks[i]);
+    }
+
+    var mostEff = effQueue.poll();
+    var capitalized = AutoPerks.capitaliseFirstLetter(mostEff.name);
+    var price; // Price of *next* purchase.
+    var basePrice
+    if (capitalized.indexOf("_II") > 0) {
+        game.global.buyAmt = 1
+        basePrice = getPortalUpgradePrice(capitalized.substr(0, capitalized.length - 3))
+        game.global.buyAmt = AutoPerks.getPerkBuyCount(capitalized, basePrice)
+        price = getPortalUpgradePrice(capitalized)
+    } else {
+        game.global.buyAmt = 1
+        price = AutoPerks.calculatePrice(mostEff, mostEff.level);
+    }
+    var inc;
+    while(helium > price) {
+        // Purchase the most efficient perk
+        if (capitalized.indexOf("_II") > 0) {
+            mostEff.level += getPerkBuyCount(capitalized)
+        } else {
+            mostEff.level++
+        }
+        mostEff.spend += price
+        helium -= price;
+        buyPortalUpgrade(capitalized)
+
+        price = AutoPerks.calculatePrice(mostEff, mostEff.level);
+        inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
+        mostEff.efficiency = inc/price;
+        if(mostEff.level < mostEff.max) // but first, check if the perk has reached its maximum value
+            effQueue.add(mostEff);
+
+        mostEff = effQueue.poll();
+        capitalized = AutoPerks.capitaliseFirstLetter(mostEff.name);
+        if (capitalized.indexOf("_II") > 0) {
+            game.global.buyAmt = 1
+            basePrice = getPortalUpgradePrice(capitalized.substr(0, capitalized.length - 3))
+            truePrice = (basePrice > helium) ? helium : basePrice;
+            game.global.buyAmt = AutoPerks.getPerkBuyCount(capitalized, truePrice)
+            price = getPortalUpgradePrice(capitalized)
+        } else {
+            game.global.buyAmt = 1
+            price = AutoPerks.calculatePrice(mostEff, mostEff.level);
+        }
+    }
+
+    var selector = document.getElementById('dumpPerk');
+    var index = selector.selectedIndex;
+    if(selector.value != "None") {
+        var dumpPerk = AutoPerks.getPerkByName("Toughness_II")
+        capitalized = AutoPerks.capitaliseFirstLetter(dumpPerk.name);
+        if(dumpPerk.level < dumpPerk.max) {
+            game.global.buyAmt = AutoPerks.getPerkBuyCount(capitalized, helium)
+            buyPortalUpgrade(capitalized)
+            dumpPerk.level += game.global.buyAmt
+        }
+    }
+
+    while (effQueue.size > 1) {
+        mostEff = effQueue.poll();
+        capitalized = AutoPerks.capitaliseFirstLetter(mostEff.name);
+        price = AutoPerks.calculatePrice(mostEff, mostEff.level);
+        if (price >= helium) continue;
+        // Purchase the most efficient perk
+        helium -= price;
+        mostEff.level++;
+        game.global.buyAmt = 1
+        buyPortalUpgrade(capitalized)
+        // Reduce its efficiency
+        inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
+        price = AutoPerks.calculatePrice(mostEff, mostEff.level);
+        mostEff.efficiency = inc/price;
+        // Add back into queue run again until out of helium
+        if(mostEff.level < mostEff.max) // but first, check if the perk has reached its maximum value
+            effQueue.add(mostEff);
+    }
+
+    var FixedPerks = AutoPerks.getFixedPerks();
+    for(var i in FixedPerks) {
+        var capitalized = AutoPerks.capitaliseFirstLetter(FixedPerks[i].name);
+        game.global.buyAmt = FixedPerks[i].level;
+        //console.log(FixedPerks[i].name + " " + FixedPerks[i].level);
+        if (game.global.buyAmt < 0) {
+            needsRespec = true;
+            break;
+        }
+        else
+            buyPortalUpgrade(capitalized);
     }
 }
 
@@ -598,7 +754,7 @@ var overkill = new AutoPerks.VariablePerk("overkill", 1000000, true,         10,
 var capable = new AutoPerks.MultiplyPerk("capable", 100000000, 10,           11, 1, 10);
 var cunning = new AutoPerks.VariablePerk("cunning", 100000000000, false,     12, 0.25);
 var curious = new AutoPerks.VariablePerk("curious", 100000000000000, false,  13, 30);
-var classy = new AutoPerks.VariablePerk("classy", 100000000000000000, false, 14, 2);
+var classy = new AutoPerks.VariablePerk("classy", 100000000000000000, false, 14, 2, 150);
 //tier2 perks
 var toughness_II = new AutoPerks.ArithmeticPerk("toughness_II", 20000, 500, 0.01, toughness);
 var power_II = new AutoPerks.ArithmeticPerk("power_II", 20000, 500, 0.01, power);

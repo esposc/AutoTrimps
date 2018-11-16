@@ -115,8 +115,8 @@ function doPortal(challenge) {
     //Go into portal screen
     portalClicked();
     //AutoPerks: do this first, because it reflashes the screen.
-    if (getPageSetting('AutoAllocatePerks'))
-        AutoPerks.clickAllocate();
+    if (getPageSetting('AutoAllocatePerks') == 1) AutoPerks.clickAllocate();
+    else if (getPageSetting('AutoAllocatePerks') == 2) AutoPerks.clickAllocate2();
     //Auto Start Daily:
     if (getPageSetting('AutoStartDaily')) {
         selectChallenge('Daily');
