@@ -29,6 +29,7 @@ var buttonbar = document.getElementById("portalBtnContainer");
 var allocatorBtn1 = document.createElement("DIV");
 allocatorBtn1.id = 'allocatorBTN1';
 allocatorBtn1.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
+autoPerkVersion = getPageSetting('autoAllocatePerks')
 allocatorBtn1.setAttribute('onclick', 'AutoPerks.clickAllocate()');
 allocatorBtn1.textContent = 'Allocate Perks';
 buttonbar.appendChild(allocatorBtn1);
@@ -255,34 +256,17 @@ AutoPerks.clickAllocate = function() {
     // Get owned perks
     var perks = AutoPerks.getOwnedPerks();
 
-    // determine how to spend helium
-    AutoPerks.spendHelium(remainingHelium, perks);
+    if (getPageSetting('AutoAllocatePerks') == 1) {
+        // determine how to spend helium
+        AutoPerks.spendHelium(remainingHelium, perks);
 
-    //re-arrange perk points
-    AutoPerks.applyCalculations(perks);
-}
-
-AutoPerks.clickAllocate2 = function() {
-    AutoPerks.initialise(); // Reset all fixed perks to 0 and grab new ratios if any
-
-    var preSpentHe = 0;
-
-    var helium = AutoPerks.getHelium();
-
-    // Get fixed perks
-    var fixedPerks = AutoPerks.getFixedPerks();
-    for (var i = 0; i < fixedPerks.length; i++) {
-        fixedPerks[i].level = game.portal[AutoPerks.capitaliseFirstLetter(fixedPerks[i].name)].level;
-        var price = AutoPerks.calculateTotalPrice(fixedPerks[i], fixedPerks[i].level);
-        preSpentHe += price;
+        //re-arrange perk points
+        AutoPerks.applyCalculations(perks);
     }
-
-    var remainingHelium = helium - preSpentHe;
-    // Get owned perks
-    var perks = AutoPerks.getOwnedPerks();
-
-    // determine how to spend helium
-    AutoPerks.spendHelium2(remainingHelium, perks);
+    else if (getPageSetting('AutoAllocatePerks') == 2) {
+        // determine how to spend helium
+        AutoPerks.spendHelium2(remainingHelium, perks);
+    }
 }
 
 //NEW way: Get accurate count of helium (calcs it like the game does)
@@ -461,13 +445,13 @@ AutoPerks.spendHelium2 = function(helium, perks) {
     while(helium > price) {
         // Purchase the most efficient perk
         if (capitalized.indexOf("_II") > 0) {
-            mostEff.level += getPerkBuyCount(capitalized)
+            mostEff.level += AutoPerks.getPerkBuyCount(capitalized, helium)
         } else {
             mostEff.level++
         }
-        mostEff.spend += price
         helium -= price;
-        buyPortalUpgrade(capitalized)
+	debug("Buying " + mostEff.name + ": levels " + game.global.buyAmt + ", helium left " + helium);
+        buyPortalUpgrade(capitalized);
 
         price = AutoPerks.calculatePrice(mostEff, mostEff.level);
         inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
@@ -496,6 +480,7 @@ AutoPerks.spendHelium2 = function(helium, perks) {
         capitalized = AutoPerks.capitaliseFirstLetter(dumpPerk.name);
         if(dumpPerk.level < dumpPerk.max) {
             game.global.buyAmt = AutoPerks.getPerkBuyCount(capitalized, helium)
+	    debug("Buying Dump Perk: " + capitalized + ", levels " + game.global.buyAmt);
             buyPortalUpgrade(capitalized)
             dumpPerk.level += game.global.buyAmt
         }
@@ -510,7 +495,8 @@ AutoPerks.spendHelium2 = function(helium, perks) {
         helium -= price;
         mostEff.level++;
         game.global.buyAmt = 1
-        buyPortalUpgrade(capitalized)
+        debug("Buying " + mostEff.name + ": levels " + game.global.buyAmt + ", helium left " + helium);
+	buyPortalUpgrade(capitalized)
         // Reduce its efficiency
         inc = AutoPerks.calculateIncrease(mostEff, mostEff.level);
         price = AutoPerks.calculatePrice(mostEff, mostEff.level);
@@ -529,8 +515,10 @@ AutoPerks.spendHelium2 = function(helium, perks) {
             needsRespec = true;
             break;
         }
-        else
+        else {
+	    debug("Buying Fixed Perk" + capitalized + ": levels " + game.global.buyAmt);
             buyPortalUpgrade(capitalized);
+	}
     }
 }
 
